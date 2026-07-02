@@ -1,0 +1,4 @@
+@import "tailwindcss";
+
+/* هذا السطر يخبر Tailwind v4 أننا نتحكم بالوضع الداكن عبر كلاس 'dark' في عنصر html */
+@variant dark (&:where(.dark, .dark *));
