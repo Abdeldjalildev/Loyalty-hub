@@ -1,12 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-// تعريف أنواع البيانات
 export interface Customer {
   id: string;
   name: string;
   email: string;
-  points: number;
   phone: string;
+  points: number;
 }
 
 export interface Campaign {
@@ -18,17 +17,25 @@ export interface Campaign {
 }
 
 interface LoyaltyContextType {
+  /** Reactive managed lists of tracked corporate loyalty customers */
   customers: Customer[];
+  /** Pre-configured marketing reward campaigns available */
   campaigns: Campaign[];
+  /** Updates individual user account structures with additional loyalty metric balances */
   addPoints: (customerId: string, points: number) => void;
+  /** Deducts loyalty point totals following successful incentive validation transactions */
   redeemReward: (customerId: string, pointsRequired: number) => boolean;
+  /** Registers a new customer schema profile and appends it to local tracking arrays */
   addNewCustomer: (name: string, email: string, phone: string) => void;
 }
 
 const LoyaltyContext = createContext<LoyaltyContextType | undefined>(undefined);
 
+/**
+ * Core Business Logic Provider managing active state calculations, 
+ * transactions bookkeeping, mock profiles setup, and persistence workflows.
+ */
 export const LoyaltyProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // بيانات زبائن وهمية أولية (Mock Data) لتظهر في لوحة التحكم مباشرة
   const [customers, setCustomers] = useState<Customer[]>(() => {
     const saved = localStorage.getItem('lh_customers');
     return saved ? JSON.parse(saved) : [
@@ -38,7 +45,6 @@ export const LoyaltyProvider: React.FC<{ children: React.ReactNode }> = ({ child
     ];
   });
 
-  // حملات المكافآت المتاحة في المقهى/المحل
   const [campaigns] = useState<Campaign[]>([
     { id: 'CAMP-1', titleEn: 'Free Coffee', titleAr: 'قهوة مجانية', titleFr: 'Café Gratuit', pointsRequired: 50 },
     { id: 'CAMP-2', titleEn: 'Free Breakfast Meal', titleAr: 'وجبة فطور مجانية', titleFr: 'Petit Déjeuner Gratuit', pointsRequired: 150 },
@@ -49,14 +55,12 @@ export const LoyaltyProvider: React.FC<{ children: React.ReactNode }> = ({ child
     localStorage.setItem('lh_customers', JSON.stringify(customers));
   }, [customers]);
 
-  // دالة إضافة نقاط للزبون (مثلاً عند الشراء)
   const addPoints = (customerId: string, points: number) => {
     setCustomers(prev => prev.map(cust => 
       cust.id === customerId ? { ...cust, points: cust.points + points } : cust
     ));
   };
 
-  // دالة استبدال النقاط بمكافأة
   const redeemReward = (customerId: string, pointsRequired: number): boolean => {
     let success = false;
     setCustomers(prev => prev.map(cust => {
@@ -69,7 +73,6 @@ export const LoyaltyProvider: React.FC<{ children: React.ReactNode }> = ({ child
     return success;
   };
 
-  // دالة تسجيل زبون جديد في النظام تلقائياً
   const addNewCustomer = (name: string, email: string, phone: string) => {
     const newCust: Customer = {
       id: `CUST-${Math.floor(1000 + Math.random() * 9000)}`,

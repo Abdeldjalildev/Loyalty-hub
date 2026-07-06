@@ -3,6 +3,9 @@ import { Navbar } from './components/Navbar';
 import { MerchantDashboard } from './components/MerchantDashboard';
 import { CustomerPortal } from './components/CustomerPortal';
 
+/**
+ * Core Application wrapper lifecycle orchestration hub.
+ */
 function App() {
   const [view, setView] = useState<'merchant' | 'customer'>('merchant');
 
@@ -11,11 +14,7 @@ function App() {
       <Navbar currentView={view} onViewChange={setView} />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {view === 'merchant' ? (
-          <MerchantDashboard />
-        ) : (
-          <CustomerPortal />
-        )}
+        {view === 'merchant' ? <MerchantDashboard /> : <CustomerPortal />}
       </main>
     </div>
   );

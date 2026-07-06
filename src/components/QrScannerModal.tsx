@@ -9,13 +9,17 @@ interface QrScannerModalProps {
   onScanSuccess: (customerId: string) => void;
 }
 
+/**
+ * QrScannerModal component. Renders an overlay module initiating
+ * hardware camera permissions to handle real-time code verification.
+ */
 export const QrScannerModal: React.FC<QrScannerModalProps> = ({ isOpen, onClose, onScanSuccess }) => {
-  const { lang } = useApp();
+  const { t } = useApp();
 
   useEffect(() => {
     if (!isOpen) return;
 
-    // إعداد الماسح وتحديد المعايير
+    // Configure the scanner dimensions and properties
     const scanner = new Html5QrcodeScanner(
       "qr-reader",
       { fps: 10, qrbox: { width: 250, height: 250 } },
@@ -24,20 +28,22 @@ export const QrScannerModal: React.FC<QrScannerModalProps> = ({ isOpen, onClose,
 
     scanner.render(
       (decodedText) => {
-        // عند نجاح المسح
         onScanSuccess(decodedText);
-        scanner.clear().then(() => onClose()).catch(err => console.error(err));
+        scanner.clear()
+          .then(() => onClose())
+          .catch(err => console.error("Error clearing scanner on success:", err));
       },
-      (error) => {
-        // يمكن تجاهل أخطاء البحث المستمر عن كود في الكاميرا لتفادي إزعاج الـ Console
+      () => {
+        // Continuous lookup errors can be safely ignored to keep the console clean
       }
     );
 
-    // تنظيف الكاميرا عند إغلاق النافذة
+    // Secure component cleanup lifecycle on unmount/close
     return () => {
-      scanner.clear().catch(err => console.error("Failed to clear scanner on unmount", err));
+      scanner.clear()
+        .catch(err => console.error("Failed to clear scanner on unmount:", err));
     };
-  }, [isOpen]);
+  }, [isOpen, onClose, onScanSuccess]);
 
   if (!isOpen) return null;
 
@@ -45,25 +51,25 @@ export const QrScannerModal: React.FC<QrScannerModalProps> = ({ isOpen, onClose,
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-md p-6 relative border border-gray-100 dark:border-gray-700 shadow-xl animate-scale-in">
         
-        {/* زر الإغلاق */}
+        {/* Close Action Trigger Button */}
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 rtl:left-4 rtl:right-auto p-1.5 rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-750 transition"
+          className="absolute top-4 right-4 rtl:left-4 rtl:right-auto p-1.5 rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-750 transition cursor-pointer"
         >
           <X size={20} />
         </button>
 
         <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
-          {lang === 'ar' ? 'مسح رمز QR للزبون' : lang === 'fr' ? 'Scanner le Code QR' : 'Scan Customer QR Code'}
+          {t('scanTitle')}
         </h3>
 
-        {/* الحاوية التي ستظهر فيها الكاميرا */}
+        {/* Camera Feed Capture DOM target container */}
         <div className="overflow-hidden rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
           <div id="qr-reader" className="w-full"></div>
         </div>
 
         <p className="text-xs text-center text-gray-400 mt-4">
-          {lang === 'ar' ? 'ضع كود الزبون أمام الكاميرا ليتم التعرف عليه تلقائياً' : lang === 'fr' ? 'Placez le code QR devant la caméra' : 'Place the QR code in front of the camera'}
+          {t('scanCameraInstruction')}
         </p>
       </div>
     </div>
