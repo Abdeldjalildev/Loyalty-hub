@@ -24,6 +24,6 @@ LoyaltyHub is a modern, interactive web application designed to manage customer 
 
 ## 🌐 Live Demo
 
-Check out the live application here: [أضف رابط موقعك على Vercel هنا]
+Check out the live application here: [https://loyalty-hub-orpin.vercel.app/]
 
 ```
