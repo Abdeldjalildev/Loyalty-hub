@@ -97,7 +97,7 @@ export const MerchantDashboard: React.FC = () => {
             </ResponsiveContainer>
           </div>
         </div>
-[06/07/2026 10:34] Khalfa Abd Eldjalil: {/* 3. ISOLATED SUB-COMPONENT CUSTOMER SIGNUP REGISTRATION FORM */}
+          {/* 3. ISOLATED SUB-COMPONENT CUSTOMER SIGNUP REGISTRATION FORM */}
         <CustomerForm onSubmitCustomer={addNewCustomer} />
       </div>
 
