@@ -618,10 +618,12 @@ If a requested change belongs to a later phase, document it rather than implemen
 
 ## 10. Current Work Position
 
-At the creation of this document:
-- Phase 0 is the active planning phase.
-- The next approved implementation step is Phase 0 Gate 1.
-- No Firebase implementation should begin until Phase 0 architecture/contract work has been completed and the relevant gate authorizes it.
+Current status:
+- Phase 0 — Gate 1: **PASS / CLOSED**.
+- Gate 1 baseline report: `docs/phase-0/PHASE-0-GATE-1-REPORT.md`.
+- No product source files were modified during Gate 1.
+- The next authorized step is Phase 0 — Gate 2: MVP Contract.
+- Firebase implementation remains deferred to Phase 1.
 - No production business logic should be invented from memory; inspect the current repository before each implementation step.
 
 ## 11. Change-Control Rule
