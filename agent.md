@@ -217,17 +217,33 @@ No production backend implementation before Phase 0 closure.
 
 Goal: introduce the production-capable backend foundation.
 
+**Status: PASS / CLOSED**
+
+Evidence:
+- `docs/phase-1/PHASE-1-GATE-1-REPORT.md`
+- `docs/phase-1/PHASE-1-GATE-2-REPORT.md`
+- `docs/phase-1/PHASE-1-GATE-3-REPORT.md`
+- `docs/phase-1/PHASE-1-GATE-4-REPORT.md`
+- `docs/phase-1/PHASE-1-GATE-5-REPORT.md`
+
+
 #### Gate 1 — Foundation Baseline
+**Status: PASS / CLOSED**
+
 - Verify build, TypeScript, Vite and dependency baseline.
 - Define clean backend/frontend boundaries.
 - Avoid unrelated refactors.
 
 #### Gate 2 — Environment Architecture
+**Status: PASS / CLOSED**
+
 Define development/preview/production environments.
 Separate public Firebase configuration from secrets.
 Define safe environment variable handling.
 
 #### Gate 3 — Firebase Foundation
+**Status: PASS / CLOSED**
+
 Introduce Firebase infrastructure:
 - Firebase project/environment setup;
 - Authentication foundation;
@@ -239,6 +255,8 @@ Introduce Firebase infrastructure:
 Do not implement the full loyalty domain yet.
 
 #### Gate 4 — Security Foundation
+**Status: PASS / CLOSED**
+
 Establish:
 - authenticated vs unauthenticated boundaries;
 - baseline Firestore Rules;
@@ -248,6 +266,8 @@ Establish:
 - safe function invocation boundaries.
 
 #### Gate 5 — Closure
+**Status: PASS / CLOSED**
+
 Verify build, deployment compatibility, Firebase connectivity, emulator behavior and security baseline.
 Phase 1 must leave a stable backend foundation for identity work.
 
@@ -660,14 +680,26 @@ Current status:
 - Phase 0 — Gate 4: **PASS / CLOSED**.
 - Phase 0 — Gate 5: **PASS / CLOSED**.
 - Phase 0: **PASS / CLOSED**.
+- Phase 1 — Gate 1: **PASS / CLOSED**.
+- Phase 1 — Gate 2: **PASS / CLOSED**.
+- Phase 1 — Gate 3: **PASS / CLOSED**.
+- Phase 1 — Gate 4: **PASS / CLOSED**.
+- Phase 1 — Gate 5: **PASS / CLOSED**.
+- Phase 1: **PASS / CLOSED**.
 - Gate 1 baseline report: `docs/phase-0/PHASE-0-GATE-1-REPORT.md`.
 - Gate 2 contract report: `docs/phase-0/PHASE-0-GATE-2-REPORT.md`.
 - Gate 3 domain report: `docs/phase-0/PHASE-0-GATE-3-REPORT.md`.
 - Gate 4 architecture report: `docs/phase-0/PHASE-0-GATE-4-REPORT.md`.
 - Gate 5 closure report: `docs/phase-0/PHASE-0-GATE-5-REPORT.md`.
+- Phase 1 Gate 1 report: `docs/phase-1/PHASE-1-GATE-1-REPORT.md`.
+- Phase 1 Gate 2 report: `docs/phase-1/PHASE-1-GATE-2-REPORT.md`.
+- Phase 1 Gate 3 report: `docs/phase-1/PHASE-1-GATE-3-REPORT.md`.
+- Phase 1 Gate 4 report: `docs/phase-1/PHASE-1-GATE-4-REPORT.md`.
+- Phase 1 Gate 5 report: `docs/phase-1/PHASE-1-GATE-5-REPORT.md`.
 - No product source files were modified during Gates 1–3.
 - Phase 0 is fully closed.
-- The next authorized step is Phase 1 — Gate 1: Production Foundation Baseline.
+- Phase 1 is fully closed.
+- The next authorized step is Phase 2 — Gate 1: Merchant Identity.
 - Firebase implementation remains deferred to Phase 1.
 - No production business logic should be invented from memory; inspect the current repository before each implementation step.
 
