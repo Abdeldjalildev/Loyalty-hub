@@ -1,0 +1,12 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /merchants/{merchantId} {
+      allow read, write: if false;
+      match /{document=**} { allow read, write: if false; }
+    }
+    match /merchantUsers/{authUid} { allow read, write: if false; }
+    match /customerUsers/{authUid} { allow read, write: if false; }
+    match /{document=**} { allow read, write: if false; }
+  }
+}
