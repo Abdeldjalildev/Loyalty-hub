@@ -142,6 +142,18 @@ Customer MVP:
 
 Explicitly define out-of-scope items so scope cannot drift.
 
+**Status: PASS / CLOSED**
+
+Evidence: `docs/phase-0/PHASE-0-GATE-2-REPORT.md`
+
+Key contract decisions:
+- Merchant Owner is the only merchant role in MVP.
+- One active loyalty program per merchant.
+- Customer self-service uses Firebase Authentication email-link/passwordless access.
+- Customer email is required for self-service enrollment; phone-only records may remain merchant-managed.
+- Point issuance and redemption are server-authoritative.
+- MVP excludes payments, advanced loyalty/marketing, staff roles, multi-location, native apps, POS integrations, and advanced BI.
+
 #### Gate 3 — Domain Model
 Define entities and relationships:
 - Merchant
@@ -154,6 +166,19 @@ Define entities and relationships:
 - required audit metadata
 
 Define ownership, lifecycle, immutable fields, mutable fields and relationships.
+
+**Status: PASS / CLOSED**
+
+Evidence: `docs/phase-0/PHASE-0-GATE-3-REPORT.md`
+
+Key domain decisions:
+- Merchant is the tenant root.
+- Customer, Reward, Transaction and Redemption are tenant-bound.
+- Transaction is append-only authoritative loyalty ledger evidence.
+- Redemption references its authoritative transaction and snapshots the trusted reward cost used.
+- Customer balance is server-controlled and never client-authoritative.
+- QR artifacts are security artifacts, not authorization grants.
+- Sensitive operations require server-controlled actor, tenant, timestamp and replay/idempotency metadata where applicable.
 
 #### Gate 4 — Architecture Decision
 Finalize:
@@ -620,9 +645,13 @@ If a requested change belongs to a later phase, document it rather than implemen
 
 Current status:
 - Phase 0 — Gate 1: **PASS / CLOSED**.
+- Phase 0 — Gate 2: **PASS / CLOSED**.
+- Phase 0 — Gate 3: **PASS / CLOSED**.
 - Gate 1 baseline report: `docs/phase-0/PHASE-0-GATE-1-REPORT.md`.
-- No product source files were modified during Gate 1.
-- The next authorized step is Phase 0 — Gate 2: MVP Contract.
+- Gate 2 contract report: `docs/phase-0/PHASE-0-GATE-2-REPORT.md`.
+- Gate 3 domain report: `docs/phase-0/PHASE-0-GATE-3-REPORT.md`.
+- No product source files were modified during Gates 1–3.
+- The next authorized step is Phase 0 — Gate 4: Architecture Decision.
 - Firebase implementation remains deferred to Phase 1.
 - No production business logic should be invented from memory; inspect the current repository before each implementation step.
 
