@@ -1,0 +1,30 @@
+name: Phase 1 Foundation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+
+  firebase-foundation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install --prefix functions --ignore-scripts
+      - run: node --check functions/index.js
+      - run: npx --yes firebase-tools@15.28.2 emulators:exec --only auth,firestore,functions "node --test functions"
