@@ -181,6 +181,10 @@ Key domain decisions:
 - Sensitive operations require server-controlled actor, tenant, timestamp and replay/idempotency metadata where applicable.
 
 #### Gate 4 — Architecture Decision
+**Status: PASS / CLOSED**
+
+Evidence: `docs/phase-0/PHASE-0-GATE-4-REPORT.md`
+
 Finalize:
 - Firebase Authentication;
 - Firestore structure;
@@ -196,8 +200,14 @@ Finalize:
 Firebase is selected as the backend platform; implementation starts in Phase 1.
 
 #### Gate 5 — Closure
+**Status: PASS / CLOSED**
+
+Evidence: `docs/phase-0/PHASE-0-GATE-5-REPORT.md`
+
 Verify the product contract, domain model, architecture and security boundaries.
 Output: LoyaltyHub Product Blueprint.
+
+**Phase 0: PASS / CLOSED**
 
 No production backend implementation before Phase 0 closure.
 
@@ -647,11 +657,17 @@ Current status:
 - Phase 0 — Gate 1: **PASS / CLOSED**.
 - Phase 0 — Gate 2: **PASS / CLOSED**.
 - Phase 0 — Gate 3: **PASS / CLOSED**.
+- Phase 0 — Gate 4: **PASS / CLOSED**.
+- Phase 0 — Gate 5: **PASS / CLOSED**.
+- Phase 0: **PASS / CLOSED**.
 - Gate 1 baseline report: `docs/phase-0/PHASE-0-GATE-1-REPORT.md`.
 - Gate 2 contract report: `docs/phase-0/PHASE-0-GATE-2-REPORT.md`.
 - Gate 3 domain report: `docs/phase-0/PHASE-0-GATE-3-REPORT.md`.
+- Gate 4 architecture report: `docs/phase-0/PHASE-0-GATE-4-REPORT.md`.
+- Gate 5 closure report: `docs/phase-0/PHASE-0-GATE-5-REPORT.md`.
 - No product source files were modified during Gates 1–3.
-- The next authorized step is Phase 0 — Gate 4: Architecture Decision.
+- Phase 0 is fully closed.
+- The next authorized step is Phase 1 — Gate 1: Production Foundation Baseline.
 - Firebase implementation remains deferred to Phase 1.
 - No production business logic should be invented from memory; inspect the current repository before each implementation step.
 
