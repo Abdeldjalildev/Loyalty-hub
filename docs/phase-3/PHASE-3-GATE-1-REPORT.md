@@ -1,6 +1,6 @@
 # Phase 3 — Gate 1: Customer Persistence
 
-**Status: IMPLEMENTED / PENDING FINAL CI**
+**Status: PASS / CLOSED**
 
 Customer persistence is implemented under the merchant tenant:
 - customer create/update/archive lifecycle;
@@ -9,4 +9,4 @@ Customer persistence is implemented under the merchant tenant:
 - merchant ownership metadata;
 - authoritative points field initialized to zero.
 
-Final PASS requires green CI evidence.
+Evidence: GitHub Actions PR run #36 passed.

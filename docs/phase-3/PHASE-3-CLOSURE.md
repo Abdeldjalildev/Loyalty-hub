@@ -2,14 +2,14 @@
 
 ## Current status
 
-**IMPLEMENTED / PENDING FINAL CI**
+**PASS / CLOSED**
 
 ### Gate status
-- Gate 1 — Customer Persistence: IMPLEMENTED / PENDING FINAL CI
-- Gate 2 — Loyalty Program & Rewards: IMPLEMENTED / PENDING FINAL CI
-- Gate 3 — Points Engine: IMPLEMENTED / PENDING FINAL CI
-- Gate 4 — Persistence Verification: IMPLEMENTED / PENDING FINAL CI
-- Gate 5 — Closure: IMPLEMENTED / PENDING FINAL CI
+- Gate 1 — Customer Persistence: PASS / CLOSED
+- Gate 2 — Loyalty Program & Rewards: PASS / CLOSED
+- Gate 3 — Points Engine: PASS / CLOSED
+- Gate 4 — Persistence Verification: PASS / CLOSED
+- Gate 5 — Closure: PASS / CLOSED
 
 ### Scope delivered
 - Firestore-backed customers under each merchant tenant.
@@ -33,4 +33,4 @@ Those remain in later roadmap phases.
 Sensitive loyalty mutations run through authenticated callable functions and Admin SDK server logic. Firestore direct client access to merchant data is denied.
 
 ### Evidence
-Final GitHub Actions verification is required before merge to `main` and PASS / CLOSED status.
+Evidence: PR run #36 (`35638940069`) passed both frontend and firebase-foundation; main run #37 (`35639082106`) also passed after merge.
