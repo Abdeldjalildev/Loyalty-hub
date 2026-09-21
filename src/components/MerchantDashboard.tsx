@@ -67,7 +67,8 @@ export const MerchantDashboard: React.FC = () => {
     }
   };
 
-  const filteredCustomers = customers.filter(customer => { const q = query.trim().toLowerCase(); return !q || [customer.name, customer.email, customer.phone, customer.id].some(value => value.toLowerCase().includes(q)); });\n  const totalCustomers = customers.length;
+  const filteredCustomers = customers.filter(customer => { const q = query.trim().toLowerCase(); return !q || [customer.name, customer.email, customer.phone, customer.id].some(value => value.toLowerCase().includes(q)); });
+  const totalCustomers = customers.length;
   const totalPoints = customers.reduce((sum, customer) => sum + customer.points, 0);
   const averagePoints = totalCustomers > 0 ? Math.round(totalPoints / totalCustomers) : 0;
   const chartData = customers.map(customer => ({ name: customer.name.split(' ')[0], [t('points')]: customer.points }));
