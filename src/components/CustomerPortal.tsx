@@ -23,7 +23,7 @@ export const CustomerPortal: React.FC = () => {
       {customers.length > 0 && (
         <CustomerSimulator 
           customers={customers} 
-          selectedId={selectedCustomerId} 
+          selectedId={effectiveCustomerId} 
           onSelectChange={setSelectedCustomerId} 
         />
       )}
