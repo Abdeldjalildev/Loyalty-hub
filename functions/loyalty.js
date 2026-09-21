@@ -386,6 +386,16 @@ async function listTransactions(db, merchantId, customerId) {
     });
 }
 
+async function updateLoyaltyProgram(db, merchantId, input) {
+  const name = requiredString(input?.name, "name", 2, 120);
+  const pointsPerUnit = validatePoints(input?.pointsPerUnit);
+  const ref = db.doc("merchants/" + merchantId + "/loyaltyPrograms/default");
+  const snapshot = await ref.get();
+  if (!snapshot.exists) throw new Error("Loyalty program not found");
+  await ref.update({ name, pointsPerUnit, updatedAt: FieldValue.serverTimestamp() });
+  return { id: ref.id, ...snapshot.data(), name, pointsPerUnit };
+}
+
 module.exports = {
   DEFAULT_REWARDS,
   QR_PREFIX,
