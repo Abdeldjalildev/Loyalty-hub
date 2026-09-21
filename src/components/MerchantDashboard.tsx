@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useLoyalty } from '../context/useLoyalty';
 import { useApp } from '../context/useApp';
 import { PlusCircle, QrCode } from 'lucide-react';
@@ -7,82 +7,64 @@ import { QrScannerModal } from './QrScannerModal';
 import { StatsCards } from './merchant/StatsCards';
 import { CustomerForm } from './merchant/CustomerForm';
 
-/**
- * Merchant Dashboard component. Acts as a core control hub providing real-time data visual analytics,
- * account registration managers, customer transaction bookkeeping tables, and rapid QR validation capabilities.
- */
 export const MerchantDashboard: React.FC = () => {
-  const { customers, campaigns, addPoints, redeemReward, addNewCustomer } = useLoyalty();
-  const { t, lang } = useApp();
-
-  const transactionSequence = useRef(0);
+  const { customers, addPoints, addNewCustomer, loading, error, reload } = useLoyalty();
+  const { t } = useApp();
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
-  const [transactions, setTransactions] = useState<Array<{
-    id: string;
-    customerName: string;
-    type: 'add' | 'redeem';
-    amountOrReward: string;
-    date: string;
-  }>>([]);
+  const toastTimer = useRef<number | undefined>(undefined);
 
-  const triggerToast = (msgKey: string, customPayload?: string, type: 'success' | 'error' = 'success') => {
-    const baseMsg = t(msgKey);
-    setToast({ msg: customPayload ? `${baseMsg}${customPayload}` : baseMsg, type });
-  };
+  const triggerToast = (msg: string, type: 'success' | 'error') => setToast({ msg, type });
 
   useEffect(() => {
-    if (toast) {
-      const timer = setTimeout(() => setToast(null), 3000);
-      return () => clearTimeout(timer);
-    }
+    if (!toast) return;
+    window.clearTimeout(toastTimer.current);
+    toastTimer.current = window.setTimeout(() => setToast(null), 3000);
+    return () => window.clearTimeout(toastTimer.current);
   }, [toast]);
 
-  const addTransaction = (customerName: string, type: 'add' | 'redeem', amountOrReward: string) => {
-    const newTx = {
-      id: `TX-${++transactionSequence.current}`,
-      customerName,
-      type,
-      amountOrReward,
-      date: new Date().toLocaleTimeString(lang === 'ar' ? 'ar-EG' : 'fr-FR', { hour: '2-digit', minute: '2-digit' })
-    };
-    setTransactions(prev => [newTx, ...prev].slice(0, 5));
+  const handleAddPoints = async (customerId: string) => {
+    const value = window.prompt(t('addPointsPrompt'));
+    if (value == null || value.trim() === '') return;
+    const points = Number(value);
+    if (!Number.isSafeInteger(points) || points <= 0) {
+      triggerToast('Enter a positive whole number of points.', 'error');
+      return;
+    }
+    try {
+      await addPoints(customerId, points);
+      triggerToast(t('toastPointsSuccess'), 'success');
+    } catch (actionError) {
+      triggerToast(actionError instanceof Error ? actionError.message : 'POINTS_ISSUANCE_FAILED', 'error');
+    }
+    void customerName;
   };
 
   const handleScanSuccess = (customerId: string) => {
     const found = customers.find(c => c.id === customerId);
-    if (found) {
-      triggerToast('toastCustomerFound', found.name, 'success');
-    } else {
-      triggerToast('toastCustomerNotFound', undefined, 'error');
-    }
+    triggerToast(found ? t('toastCustomerFound') + found.name : t('toastCustomerNotFound'), found ? 'success' : 'error');
   };
 
   const totalCustomers = customers.length;
-  const totalPoints = customers.reduce((sum, c) => sum + c.points, 0);
+  const totalPoints = customers.reduce((sum, customer) => sum + customer.points, 0);
   const averagePoints = totalCustomers > 0 ? Math.round(totalPoints / totalCustomers) : 0;
-
-  const chartData = customers.map(c => ({
-    name: c.name.split(' ')[0],
-    [t('points')]: c.points
-  }));
+  const chartData = customers.map(customer => ({ name: customer.name.split(' ')[0], [t('points')]: customer.points }));
 
   return (
     <div className="space-y-8 animate-fade-in">
-      
-      {/* 1. RENDER ISOLATED ANALYTICS STATS OVERVIEWS */}
-      <StatsCards 
-        totalCustomers={totalCustomers} 
-        totalPoints={totalPoints} 
-        averagePoints={averagePoints} 
-      />
+      {loading && <div className="rounded-xl bg-indigo-50 dark:bg-indigo-950/30 px-4 py-3 text-sm text-indigo-700 dark:text-indigo-300">Loading persistent loyalty data…</div>}
+      {error && (
+        <div className="rounded-xl bg-rose-50 dark:bg-rose-950/30 px-4 py-3 text-sm text-rose-700 dark:text-rose-300 flex items-center justify-between gap-4">
+          <span>{error}</span>
+          <button onClick={() => void reload()} className="font-bold underline">Retry</button>
+        </div>
+      )}
+
+      <StatsCards totalCustomers={totalCustomers} totalPoints={totalPoints} averagePoints={averagePoints} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* 2. RECHARTS POINTS ANALYTICS VISUALIZATION */}
         <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-150 dark:border-gray-700 lg:col-span-2 flex flex-col">
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
-            {t('customerPointsAnalytics')}
-          </h3>
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">{t('customerPointsAnalytics')}</h3>
           <div className="h-64 w-full mt-auto">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData}>
@@ -90,28 +72,30 @@ export const MerchantDashboard: React.FC = () => {
                 <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
                 <Tooltip cursor={{ fill: 'transparent' }} />
                 <Bar dataKey={t('points')} radius={[4, 4, 0, 0]}>
-                  {chartData.map((_, index) => (
-                    <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#4f46e5' : '#06b6d4'} />
-                  ))}
+                  {chartData.map((_, index) => <Cell key={'cell-' + index} fill={index % 2 === 0 ? '#4f46e5' : '#06b6d4'} />)}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
-          {/* 3. ISOLATED SUB-COMPONENT CUSTOMER SIGNUP REGISTRATION FORM */}
-        <CustomerForm onSubmitCustomer={addNewCustomer} />
+        <CustomerForm onSubmitCustomer={async (name, email, phone) => {
+          try {
+            await addNewCustomer(name, email, phone);
+            triggerToast(t('addAccount'), 'success');
+          } catch (actionError) {
+            triggerToast(actionError instanceof Error ? actionError.message : 'CUSTOMER_CREATE_FAILED', 'error');
+            throw actionError;
+          }
+        }} />
       </div>
 
-      {/* 4. ACTIVE ACCOUNTS DATA MANAGEMENT TABLE ROW */}
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-150 dark:border-gray-700 p-6">
         <div className="flex items-center justify-between mb-6 border-b border-gray-100 dark:border-gray-700 pb-4">
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-            {t('activeAccounts')}
-          </h3>
-          <button
-            onClick={() => setIsScannerOpen(true)}
-            className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-sm transition cursor-pointer"
-          >
+          <div>
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white">{t('activeAccounts')}</h3>
+            <p className="text-xs text-gray-400 mt-1">Customers and balances are now loaded from the merchant's persistent tenant data.</p>
+          </div>
+          <button onClick={() => setIsScannerOpen(true)} className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-sm transition cursor-pointer">
             <QrCode size={18} />
             {t('scanQRCode')}
           </button>
@@ -136,7 +120,7 @@ export const MerchantDashboard: React.FC = () => {
                     <div className="font-medium text-gray-900 dark:text-white">{customer.name}</div>
                     <div className="text-xs text-gray-400 dark:text-gray-500">{customer.email || '---'}</div>
                   </td>
-                  <td className="px-6 py-4 font-mono text-xs text-gray-500 dark:text-gray-400">{customer.phone}</td>
+                  <td className="px-6 py-4 font-mono text-xs text-gray-500 dark:text-gray-400">{customer.phone || '---'}</td>
                   <td className="px-6 py-4">
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400">
                       {customer.points} PTS
@@ -145,97 +129,35 @@ export const MerchantDashboard: React.FC = () => {
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-center gap-2">
                       <button
-                        onClick={() => {
-                          const pts = prompt(t('addPointsPrompt'));
-                          if (pts && !isNaN(Number(pts))) {
-                            addPoints(customer.id, Number(pts));
-                            addTransaction(customer.name, 'add', `${pts} PTS`);
-                            triggerToast('toastPointsSuccess', undefined, 'success');
-                          }
-                        }}
+                        onClick={() => void handleAddPoints(customer.id)}
                         className="p-1.5 rounded-lg text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition cursor-pointer"
+                        title="Issue points"
                       >
                         <PlusCircle size={18} />
                       </button>
-                      
-                      <select
-                        onChange={(e) => {
-                          if (e.target.value) {
-                            const campaign = campaigns.find(camp => camp.id === e.target.value);
-                            redeemReward(customer.id, Number(e.target.value));
-                            if (campaign) {
-                              const rewardName = lang === 'ar' ? campaign.titleAr : lang === 'fr' ? campaign.titleFr : campaign.titleEn;
-                              addTransaction(customer.name, 'redeem', rewardName);
-                            }
-                            e.target.value = '';
-                            triggerToast('toastSuccessRedeem', undefined, 'success');
-                          }
-                        }}
-                        className="text-xs bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-1 text-gray-700 dark:text-gray-200"
-                      >
-                        <option value="">{t('quickActionsPlaceholder')}</option>
-                        {campaigns.map((camp) => (
-                          <option 
-                            key={camp.id} 
-                            value={camp.id} 
-                            disabled={customer.points < camp.pointsRequired}
-                          >
-                            {lang === 'ar' ? camp.titleAr : lang === 'fr' ? camp.titleFr : camp.titleEn} ({camp.pointsRequired} PTS)
-                          </option>
-                        ))}
-                      </select>
                     </div>
                   </td>
                 </tr>
               ))}
+              {!loading && customers.length === 0 && (
+                <tr><td colSpan={5} className="px-6 py-10 text-center text-gray-400">No active customers yet.</td></tr>
+              )}
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* 5. HISTORIC TRANSACTION LOG ACTIVITY OVERLAY */}
-      {transactions.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-150 dark:border-gray-700 p-6 animate-fade-in">
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
-            {t('recentActivity')}
-          </h3>
-          <div className="space-y-3">
-            {transactions.map(tx => (
-              <div key={tx.id} className="flex items-center justify-between p-3.5 rounded-xl bg-gray-50 dark:bg-gray-750/50 border border-gray-100 dark:border-gray-700 text-sm">
-                <div className="flex items-center gap-3">
-                  <span className={`w-2.5 h-2.5 rounded-full ${tx.type === 'add' ? 'bg-emerald-500' : 'bg-purple-500'}`} />
-                  <div>
-                    <span className="font-bold text-gray-900 dark:text-white">{tx.customerName}</span>
-                    <span className="text-gray-500 dark:text-gray-400 mx-1.5">
-                      {tx.type === 'add' ? t('received') : t('redeemed')}
-                    </span>
-                    <span className={`font-medium ${tx.type === 'add' ? 'text-emerald-600 dark:text-emerald-400' : 'text-purple-600 dark:text-purple-400'}`}>
-                      {tx.amountOrReward}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 font-mono text-xs text-gray-400">
-                  <span>{tx.id}</span>
-                  <span>{tx.date}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <QrScannerModal 
-        isOpen={isScannerOpen} 
-        onClose={() => setIsScannerOpen(false)} 
-        onScanSuccess={handleScanSuccess} 
-      />
+      <QrScannerModal isOpen={isScannerOpen} onClose={() => setIsScannerOpen(false)} onScanSuccess={handleScanSuccess} />
 
       {toast && (
-        <div className={`fixed bottom-5 right-5 z-50 px-6 py-3 rounded-xl shadow-xl text-white font-bold text-sm transition-all duration-500 transform translate-y-0 animate-bounce ${toast.type === 'success' ? 'bg-emerald-600' : 'bg-rose-600'}`}>
+        <div className={'fixed bottom-5 right-5 z-50 px-6 py-3 rounded-xl shadow-xl text-white font-bold text-sm transition-all duration-500 animate-bounce ' + (toast.type === 'success' ? 'bg-emerald-600' : 'bg-rose-600')}>
           {toast.msg}
         </div>
       )}
+
+      <div className="text-xs text-gray-400 dark:text-gray-500 text-center">
+        Point issuance is server-authoritative. Redemption and transaction history remain disabled until Phase 4.
+      </div>
     </div>
   );
 };
-        

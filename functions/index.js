@@ -38,3 +38,64 @@ exports.getMerchantContext = onCall(async (request) => {
   if (!merchant.exists) throw new HttpsError("failed-precondition", "Merchant tenant is missing.");
   return { merchantId: data.merchantId, role: data.role, status: data.status, merchant: merchant.data() };
 });
+
+const {
+  listLoyaltyData,
+  createCustomer,
+  updateCustomer,
+  archiveCustomer,
+  createReward,
+  updateReward,
+  issuePoints,
+} = require("./loyalty");
+
+async function requireMerchantContext(request) {
+  if (!request.auth) throw new HttpsError("unauthenticated", "Authentication is required.");
+  const mapping = await db.doc("merchantUsers/" + request.auth.uid).get();
+  if (!mapping.exists) throw new HttpsError("failed-precondition", "Merchant tenant is not provisioned.");
+  const data = mapping.data();
+  if (data.status !== "active" || data.role !== "owner") throw new HttpsError("permission-denied", "Merchant access is not active.");
+  const merchant = await db.doc("merchants/" + data.merchantId).get();
+  if (!merchant.exists || merchant.data().status !== "active") throw new HttpsError("failed-precondition", "Merchant tenant is not active.");
+  return data.merchantId;
+}
+
+async function runMerchantMutation(request, operation) {
+  const merchantId = await requireMerchantContext(request);
+  try {
+    return await operation(merchantId);
+  } catch (error) {
+    throw new HttpsError("invalid-argument", error instanceof Error ? error.message : "Invalid request.");
+  }
+}
+
+exports.getLoyaltyData = onCall(async (request) => {
+  const merchantId = await requireMerchantContext(request);
+  try {
+    return await listLoyaltyData(db, merchantId);
+  } catch (error) {
+    throw new HttpsError("internal", error instanceof Error ? error.message : "LOYALTY_LOAD_FAILED");
+  }
+});
+
+exports.createCustomer = onCall((request) => runMerchantMutation(request, (merchantId) => createCustomer(db, merchantId, request.data || {})));
+
+exports.updateCustomer = onCall((request) => runMerchantMutation(request, (merchantId) =>
+  updateCustomer(db, merchantId, request.data?.customerId, request.data || {})
+));
+
+exports.archiveCustomer = onCall((request) => runMerchantMutation(request, (merchantId) =>
+  archiveCustomer(db, merchantId, request.data?.customerId)
+));
+
+exports.createReward = onCall((request) => runMerchantMutation(request, (merchantId) =>
+  createReward(db, merchantId, request.data || {})
+));
+
+exports.updateReward = onCall((request) => runMerchantMutation(request, (merchantId) =>
+  updateReward(db, merchantId, request.data?.rewardId, request.data || {})
+));
+
+exports.issuePoints = onCall((request) => runMerchantMutation(request, (merchantId) =>
+  issuePoints(db, merchantId, request.data?.customerId, request.data?.points)
+));

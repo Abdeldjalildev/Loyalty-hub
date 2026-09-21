@@ -1,57 +1,97 @@
-import React, { useState, useEffect } from 'react';
-import { LoyaltyContext, type Campaign, type Customer } from './LoyaltyContext';
+import React, { useCallback, useEffect, useState } from 'react';
+import { callFunction } from '../firebase/callable';
+import { useAuth } from './useAuth';
+import { LoyaltyContext, type Campaign, type Customer, type LoyaltyProgram, type Reward } from './LoyaltyContext';
+
+interface LoyaltyData {
+  program: LoyaltyProgram;
+  customers: Customer[];
+  rewards: Reward[];
+}
 
 export const LoyaltyProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [customers, setCustomers] = useState<Customer[]>(() => {
-    const saved = localStorage.getItem('lh_customers');
-    return saved ? JSON.parse(saved) : [
-      { id: 'CUST-9821', name: 'Anis Belkacem', email: 'anis@email.com', phone: '0555123456', points: 120 },
-      { id: 'CUST-4310', name: 'Sarah Mansouri', email: 'sarah@email.com', phone: '0666987654', points: 45 },
-      { id: 'CUST-7712', name: 'Merouane Sifi', email: 'merouane@email.com', phone: '0777112233', points: 210 },
-    ];
-  });
+  const { session, merchant } = useAuth();
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [program, setProgram] = useState<LoyaltyProgram | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const [campaigns] = useState<Campaign[]>([
-    { id: 'CAMP-1', titleEn: 'Free Coffee', titleAr: 'قهوة مجانية', titleFr: 'Café Gratuit', pointsRequired: 50 },
-    { id: 'CAMP-2', titleEn: 'Free Breakfast Meal', titleAr: 'وجبة فطور مجانية', titleFr: 'Petit Déjeuner Gratuit', pointsRequired: 150 },
-    { id: 'CAMP-3', titleEn: '50% Discount Voucher', titleAr: 'قسيمة تخفيض 50%', titleFr: 'Bon de Réduction 50%', pointsRequired: 100 },
-  ]);
+  const reload = useCallback(async () => {
+    if (!session || !merchant) {
+      setCustomers([]);
+      setCampaigns([]);
+      setProgram(null);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await callFunction<LoyaltyData>('getLoyaltyData', session);
+      setCustomers(data.customers);
+      setCampaigns(data.rewards);
+      setProgram(data.program);
+    } catch (loadError) {
+      setError(loadError instanceof Error ? loadError.message : 'LOYALTY_LOAD_FAILED');
+    } finally {
+      setLoading(false);
+    }
+  }, [merchant, session]);
 
   useEffect(() => {
-    localStorage.setItem('lh_customers', JSON.stringify(customers));
-  }, [customers]);
+    const timer = window.setTimeout(() => {
+      void reload();
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [reload]);
 
-  const addPoints = (customerId: string, points: number) => {
-    setCustomers(prev => prev.map(cust =>
-      cust.id === customerId ? { ...cust, points: cust.points + points } : cust
-    ));
-  };
+  const addPoints = useCallback(async (customerId: string, points: number) => {
+    if (!session) throw new Error('Authentication is required.');
+    const result = await callFunction<{ balanceAfter: number }>('issuePoints', session, { customerId, points });
+    setCustomers(prev => prev.map(customer => customer.id === customerId ? { ...customer, points: result.balanceAfter } : customer));
+    return result;
+  }, [session]);
 
-  const redeemReward = (customerId: string, pointsRequired: number): boolean => {
-    let success = false;
-    setCustomers(prev => prev.map(cust => {
-      if (cust.id === customerId && cust.points >= pointsRequired) {
-        success = true;
-        return { ...cust, points: cust.points - pointsRequired };
-      }
-      return cust;
-    }));
-    return success;
-  };
+  const addNewCustomer = useCallback(async (name: string, email: string, phone: string) => {
+    if (!session) throw new Error('Authentication is required.');
+    const customer = await callFunction<Customer>('createCustomer', session, { name, email, phone });
+    setCustomers(prev => [customer, ...prev]);
+    return customer;
+  }, [session]);
 
-  const addNewCustomer = (name: string, email: string, phone: string) => {
-    const newCust: Customer = {
-      id: `CUST-${crypto.randomUUID()}`,
-      name,
-      email,
-      phone,
-      points: 0
-    };
-    setCustomers(prev => [newCust, ...prev]);
-  };
+  const updateCustomer = useCallback(async (customerId: string, name: string, email: string, phone: string) => {
+    if (!session) throw new Error('Authentication is required.');
+    const customer = await callFunction<Customer>('updateCustomer', session, { customerId, name, email, phone });
+    setCustomers(prev => prev.map(item => item.id === customerId ? customer : item));
+    return customer;
+  }, [session]);
+
+  const archiveCustomer = useCallback(async (customerId: string) => {
+    if (!session) throw new Error('Authentication is required.');
+    await callFunction('archiveCustomer', session, { customerId });
+    setCustomers(prev => prev.filter(customer => customer.id !== customerId));
+  }, [session]);
+
+  const createReward = useCallback(async (reward: Omit<Reward, 'id' | 'status'>) => {
+    if (!session) throw new Error('Authentication is required.');
+    const created = await callFunction<Reward>('createReward', session, reward);
+    setCampaigns(prev => [...prev, created]);
+    return created;
+  }, [session]);
+
+  const updateReward = useCallback(async (rewardId: string, reward: Omit<Reward, 'id' | 'status'>) => {
+    if (!session) throw new Error('Authentication is required.');
+    const updated = await callFunction<Reward>('updateReward', session, { rewardId, ...reward });
+    setCampaigns(prev => prev.map(item => item.id === rewardId ? updated : item));
+    return updated;
+  }, [session]);
 
   return (
-    <LoyaltyContext.Provider value={{ customers, campaigns, addPoints, redeemReward, addNewCustomer }}>
+    <LoyaltyContext.Provider value={{
+      customers, campaigns, program, loading, error, reload,
+      addPoints, addNewCustomer, updateCustomer, archiveCustomer, createReward, updateReward,
+    }}>
       {children}
     </LoyaltyContext.Provider>
   );

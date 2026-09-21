@@ -14,7 +14,9 @@ export const CustomerPortal: React.FC = () => {
   const { t, lang } = useApp();
   
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>(customers[0]?.id || '');
-  const currentCustomer = customers.find(c => c.id === selectedCustomerId);
+  const effectiveCustomerId = selectedCustomerId || customers[0]?.id || '';
+  const currentCustomer = customers.find(c => c.id === effectiveCustomerId);
+
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -23,7 +25,7 @@ export const CustomerPortal: React.FC = () => {
       {customers.length > 0 && (
         <CustomerSimulator 
           customers={customers} 
-          selectedId={selectedCustomerId} 
+          selectedId={effectiveCustomerId} 
           onSelectChange={setSelectedCustomerId} 
         />
       )}
