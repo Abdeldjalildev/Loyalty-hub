@@ -20,6 +20,19 @@ export interface Reward {
 
 export type Campaign = Reward;
 
+export interface LoyaltyTransaction {
+  id: string;
+  transactionId: string;
+  customerId: string;
+  type: 'earn' | 'redeem';
+  points: number;
+  balanceBefore: number;
+  balanceAfter: number;
+  rewardId?: string;
+  redemptionId?: string;
+  createdAt?: unknown;
+}
+
 export interface LoyaltyProgram {
   id: string;
   name: string;
@@ -40,6 +53,10 @@ export interface LoyaltyContextType {
   archiveCustomer: (customerId: string) => Promise<void>;
   createReward: (reward: Omit<Reward, 'id' | 'status'>) => Promise<Reward>;
   updateReward: (rewardId: string, reward: Omit<Reward, 'id' | 'status'>) => Promise<Reward>;
+  createQrToken: (customerId: string) => Promise<{ qrPayload: string; expiresAt: number; ttlSeconds: number }>;
+  redeemReward: (qrPayload: string, rewardId: string) => Promise<{ redemptionId: string; balanceAfter: number; pointsCost: number }>;
+  transactions: LoyaltyTransaction[];
+
 }
 
 export const LoyaltyContext = createContext<LoyaltyContextType | undefined>(undefined);
