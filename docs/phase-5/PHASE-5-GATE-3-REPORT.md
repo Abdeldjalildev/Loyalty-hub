@@ -1,6 +1,6 @@
 # Phase 5 — Gate 3: Customer Isolation
 
-**Status: IMPLEMENTED / PENDING CI**
+**Status: PASS / CLOSED**
 
 Customer access is server-authoritative:
 - `customerUsers/{authUid}` is not client-writable/readable;
