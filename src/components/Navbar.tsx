@@ -1,5 +1,6 @@
 import React from 'react';
-import { useApp } from '../context/AppContext';
+import { useApp } from '../context/useApp';
+import type { Language } from '../context/AppContext';
 import { Sun, Moon, Globe, ShieldCheck, User } from 'lucide-react';
 
 interface NavbarProps {
@@ -68,7 +69,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onViewChange }) => 
               <Globe size={18} />
               <select
                 value={lang}
-                onChange={(e) => setLang(e.target.value as any)}
+                onChange={(e) => setLang(e.target.value as Language)}
                 className="bg-transparent text-sm font-medium focus:outline-none cursor-pointer text-gray-700 dark:text-gray-200"
               >
                 <option value="en" className="dark:bg-gray-800">{t('langEn')}</option>
