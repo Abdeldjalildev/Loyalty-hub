@@ -156,6 +156,10 @@ async function archiveCustomer(db, merchantId, customerId) {
 
 async function createReward(db, merchantId, input) {
   const reward = validateReward(input);
+  const programSnapshot = await db.doc("merchants/" + merchantId + "/loyaltyPrograms/default").get();
+  if (!programSnapshot.exists || programSnapshot.data().status !== "active") throw new Error("Loyalty program is not initialized");
+  const minimumRewardPoints = programSnapshot.data().minimumRewardPoints;
+  if (Number.isSafeInteger(minimumRewardPoints) && reward.pointsRequired < minimumRewardPoints) throw new Error("Reward points must meet the loyalty minimum");
   const ref = db.collection("merchants/" + merchantId + "/rewards").doc();
   await ref.create({
     rewardId: ref.id,
@@ -171,6 +175,10 @@ async function createReward(db, merchantId, input) {
 async function updateReward(db, merchantId, rewardId, input) {
   const id = requiredString(rewardId, "rewardId", 1, 128);
   const reward = validateReward(input);
+  const programSnapshot = await db.doc("merchants/" + merchantId + "/loyaltyPrograms/default").get();
+  if (!programSnapshot.exists || programSnapshot.data().status !== "active") throw new Error("Loyalty program is not initialized");
+  const minimumRewardPoints = programSnapshot.data().minimumRewardPoints;
+  if (Number.isSafeInteger(minimumRewardPoints) && reward.pointsRequired < minimumRewardPoints) throw new Error("Reward points must meet the loyalty minimum");
   const ref = db.doc("merchants/" + merchantId + "/rewards/" + id);
   const snapshot = await ref.get();
   if (!snapshot.exists) throw new Error("Reward not found");
@@ -182,6 +190,11 @@ async function issuePoints(db, merchantId, customerId, points, actorUid, idempot
   const id = requiredString(customerId, "customerId", 1, 128);
   const amount = validatePoints(points);
   const key = validateIdempotencyKey(idempotencyKey);
+  const programSnapshot = await db.doc("merchants/" + merchantId + "/loyaltyPrograms/default").get();
+  if (!programSnapshot.exists || programSnapshot.data().status !== "active") throw new Error("Loyalty program is not initialized");
+  const maxPoints = programSnapshot.data().maxPointsPerTransaction;
+  if (!Number.isSafeInteger(maxPoints) || maxPoints < 1) throw new Error("Loyalty transaction limit is invalid");
+  if (amount > maxPoints) throw new Error("Points exceed the transaction limit");
   const transactionRef = key
     ? db.doc("merchants/" + merchantId + "/transactions/" + transactionIdFromKey("earn", key))
     : db.collection("merchants/" + merchantId + "/transactions").doc();
