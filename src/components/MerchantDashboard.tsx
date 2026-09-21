@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useLoyalty } from '../context/LoyaltyContext';
-import { useApp } from '../context/AppContext';
+import { useLoyalty } from '../context/useLoyalty';
+import { useApp } from '../context/useApp';
 import { PlusCircle, QrCode } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { QrScannerModal } from './QrScannerModal';
