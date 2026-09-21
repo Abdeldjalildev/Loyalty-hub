@@ -159,6 +159,7 @@ exports.listTransactions = onCall(async (request) => {
 
 exports.provisionCustomer = onCall(async (request) => {
   if (!request.auth) throw new HttpsError("unauthenticated", "Authentication is required.");
+  if (request.auth.token.email_verified !== true) throw new HttpsError("permission-denied", "A verified customer email is required.");
   try {
     return await provisionCustomer({
       db,
@@ -182,6 +183,7 @@ exports.getCustomerContext = onCall(async (request) => {
 
 exports.getCustomerPortalData = onCall(async (request) => {
   if (!request.auth) throw new HttpsError("unauthenticated", "Authentication is required.");
+  if (request.auth.token.email_verified !== true) throw new HttpsError("permission-denied", "A verified customer email is required.");
   try {
     const context = await getCustomerContext({ db, uid: request.auth.uid, email: request.auth.token.email });
     return await listCustomerPortalData(db, context.merchantId, context.customerId);
@@ -192,6 +194,7 @@ exports.getCustomerPortalData = onCall(async (request) => {
 
 exports.createCustomerQrToken = onCall(async (request) => {
   if (!request.auth) throw new HttpsError("unauthenticated", "Authentication is required.");
+  if (request.auth.token.email_verified !== true) throw new HttpsError("permission-denied", "A verified customer email is required.");
   try {
     const context = await getCustomerContext({ db, uid: request.auth.uid, email: request.auth.token.email });
     return await createQrToken(db, context.merchantId, context.customerId, request.auth.uid);
