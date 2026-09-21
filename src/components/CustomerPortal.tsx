@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLoyalty } from '../context/useLoyalty';
 import { useApp } from '../context/useApp';
 import { Gift, CheckCircle, XCircle } from 'lucide-react';
@@ -10,12 +10,39 @@ import { LoyaltyCard } from './customer/LoyaltyCard';
  * Simulates the client-facing ecosystem, loyalty point balances, and visual tracker progress benchmarks.
  */
 export const CustomerPortal: React.FC = () => {
-  const { customers, campaigns } = useLoyalty();
+  const { customers, campaigns, createQrToken } = useLoyalty();
   const { t, lang } = useApp();
   
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>(customers[0]?.id || '');
   const effectiveCustomerId = selectedCustomerId || customers[0]?.id || '';
   const currentCustomer = customers.find(c => c.id === effectiveCustomerId);
+  const [qrPayload, setQrPayload] = useState('');
+  const [qrExpiresAt, setQrExpiresAt] = useState(0);
+  const [qrError, setQrError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!effectiveCustomerId) {
+      setQrPayload('');
+      return;
+    }
+    let cancelled = false;
+    const loadQr = async () => {
+      try {
+        const token = await createQrToken(effectiveCustomerId);
+        if (!cancelled) {
+          setQrPayload(token.qrPayload);
+          setQrExpiresAt(token.expiresAt);
+          setQrError(null);
+        }
+      } catch (error) {
+        if (!cancelled) setQrError(error instanceof Error ? error.message : 'QR_TOKEN_FAILED');
+      }
+    };
+    void loadQr();
+    return () => {
+      cancelled = true;
+    };
+  }, [createQrToken, effectiveCustomerId]);
 
 
   return (
@@ -37,7 +64,8 @@ export const CustomerPortal: React.FC = () => {
           <LoyaltyCard 
             customerId={currentCustomer.id} 
             customerName={currentCustomer.name} 
-            points={currentCustomer.points} 
+            points={currentCustomer.points}
+            qrPayload={qrPayload}
           />
           
           {/* 3. REWARDS CATALOG & ELIGIBILITY SYSTEM */}
@@ -105,6 +133,10 @@ export const CustomerPortal: React.FC = () => {
         <div className="text-center py-12 text-gray-400 bg-white dark:bg-gray-800 rounded-2xl border border-gray-150 dark:border-gray-700">
           {t('noCustomers')}
         </div>
+      )}
+      {qrError && <p className="text-xs text-rose-500">{qrError}</p>}
+      {qrExpiresAt > 0 && (
+        <p className="text-xs text-gray-400 text-center">Secure QR refreshes automatically when the selected customer changes. Token expires in 5 minutes.</p>
       )}
     </div>
   );
