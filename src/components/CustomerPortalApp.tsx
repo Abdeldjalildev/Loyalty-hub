@@ -23,6 +23,9 @@ export const CustomerPortalApp: React.FC = () => {
     } catch (cause) { setError(cause instanceof Error ? cause.message : 'CUSTOMER_PORTAL_LOAD_FAILED'); }
     finally { setLoading(false); }
   }, [session]);
+  // Initial portal hydration is intentionally driven by the authenticated session.
+  // The loader owns all async state transitions; this effect only subscribes to session changes.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { void load(); }, [load]);
   if (authLoading && !session) return <div className="min-h-screen flex items-center justify-center">Loading…</div>;
   if (!session || !identity) return null;
