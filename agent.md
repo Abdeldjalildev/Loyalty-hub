@@ -726,10 +726,11 @@ Current status:
 - Phase 4: **PASS / CLOSED**.
 - Phase 4 PR verification: GitHub Actions run #43 (`35641378014`) passed frontend and Firebase foundation; emulator tests: 12/12 passed.
 - Phase 4 main verification: GitHub Actions run #44 (`35641526182`) passed frontend and Firebase foundation after merge.
-- Phase 5 — Gate 1 through Gate 5: **IMPLEMENTED / PENDING CI**.
-- Phase 5 branch: `phase-5/customer-identity-portal`.
-- Do not mark Phase 5 PASS / CLOSED until final CI evidence is green.
-- After Phase 5 closure, the next authorized step is Phase 6 — Gate 1: Business Profile.
+- Phase 5 — Gate 1 through Gate 5: **PASS / CLOSED**.
+- Phase 5 final verification: GitHub Actions run #56 (`35643260599`) passed `frontend` and `firebase-foundation`.
+- Phase 5 PR #4 (`Phase 5: customer identity and portal`) was merged to `main` with merge commit `6d02808ed77962826f2fa6e3e14da952c578c013`.
+- Phase 5 is fully closed.
+- The next authorized step is Phase 6 — Gate 1: Business Profile.
 - Phase 1 CI/runtime evidence is confirmed by GitHub Actions run #26 (`35636482998`): frontend and firebase-foundation both succeeded.
 - The selected Firebase project for the implementation is `loyal-hub-project`; Phase 2 must explicitly verify and wire the repository to this project through safe environment/deployment configuration without committing secrets.
 - No production business logic should be invented from memory; inspect the current repository before each implementation step.
