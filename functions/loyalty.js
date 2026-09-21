@@ -190,6 +190,9 @@ async function issuePoints(db, merchantId, customerId, points, actorUid, idempot
     const existing = await transaction.get(transactionRef);
     if (existing.exists) {
       const data = existing.data();
+      if (data.type !== "earn" || data.customerId !== id || data.points !== amount) {
+        throw new Error("Idempotency key is already bound to a different point issuance");
+      }
       result = {
         transactionId: existing.id,
         customerId: data.customerId,
@@ -281,6 +284,9 @@ async function redeemReward(db, merchantId, qrPayload, rewardId, actorUid, idemp
     const existing = await transaction.get(redemptionRef);
     if (existing.exists) {
       const data = existing.data();
+      if (data.rewardId !== rewardKey) {
+        throw new Error("Idempotency key is already bound to a different redemption");
+      }
       result = { ...data, redemptionId: existing.id, idempotentReplay: true };
       return;
     }
