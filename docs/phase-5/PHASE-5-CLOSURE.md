@@ -1,8 +1,12 @@
-# Phase 5 — Customer Experience
+Phase 5 is PASS / CLOSED.
 
-## Current status
+## Final CI evidence
 
-**IMPLEMENTED / PENDING CI**
+- PR #4: `Phase 5: customer identity and portal`
+- GitHub Actions run #56 (`35643260599`): **PASS**
+- `frontend`: **success**
+- `firebase-foundation`: **success**
+- PR #4 merged to `main` with merge commit `6d02808ed77962826f2fa6e3e14da952c578c013`.
 
 ## Scope delivered
 
@@ -24,6 +28,4 @@
 - Advanced customer profile/marketing features.
 - Production deployment hardening.
 
-## Evidence
-
-GitHub Actions verification is required before marking this phase PASS / CLOSED.
+Phase 5 is closed. The next authorized step is Phase 6 — Gate 1: Business Profile.
