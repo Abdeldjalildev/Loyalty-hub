@@ -9,7 +9,7 @@ import { CustomerForm } from './merchant/CustomerForm';
 
 export const MerchantDashboard: React.FC = () => {
   const { customers, addPoints, addNewCustomer, loading, error, reload } = useLoyalty();
-  const { t, lang } = useApp();
+  const { t } = useApp();
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
   const toastTimer = useRef<number | undefined>(undefined);
@@ -23,7 +23,7 @@ export const MerchantDashboard: React.FC = () => {
     return () => window.clearTimeout(toastTimer.current);
   }, [toast]);
 
-  const handleAddPoints = async (customerId: string, customerName: string) => {
+  const handleAddPoints = async (customerId: string) => {
     const value = window.prompt(t('addPointsPrompt'));
     if (value == null || value.trim() === '') return;
     const points = Number(value);
@@ -78,7 +78,15 @@ export const MerchantDashboard: React.FC = () => {
             </ResponsiveContainer>
           </div>
         </div>
-        <CustomerForm onSubmitCustomer={addNewCustomer} />
+        <CustomerForm onSubmitCustomer={async (name, email, phone) => {
+          try {
+            await addNewCustomer(name, email, phone);
+            triggerToast(t('addAccount'), 'success');
+          } catch (actionError) {
+            triggerToast(actionError instanceof Error ? actionError.message : 'CUSTOMER_CREATE_FAILED', 'error');
+            throw actionError;
+          }
+        }} />
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-150 dark:border-gray-700 p-6">
@@ -121,7 +129,7 @@ export const MerchantDashboard: React.FC = () => {
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-center gap-2">
                       <button
-                        onClick={() => void handleAddPoints(customer.id, customer.name)}
+                        onClick={() => void handleAddPoints(customer.id)}
                         className="p-1.5 rounded-lg text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition cursor-pointer"
                         title="Issue points"
                       >
@@ -150,7 +158,6 @@ export const MerchantDashboard: React.FC = () => {
       <div className="text-xs text-gray-400 dark:text-gray-500 text-center">
         Point issuance is server-authoritative. Redemption and transaction history remain disabled until Phase 4.
       </div>
-      <span className="hidden">{lang}</span>
     </div>
   );
 };
