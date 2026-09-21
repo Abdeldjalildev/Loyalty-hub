@@ -33,7 +33,7 @@ test("branding and loyalty configuration are validated and persisted", async () 
   const loaded = await getMerchantProductConfig({ db, merchantId: merchant.merchantId });
   assert.equal(loaded.merchant.branding.primaryColor, "#112233");
   assert.equal(loaded.program.maxPointsPerTransaction, 1000);
-  await assert.rejects(() => updateMerchantBranding({ db, merchantId: merchant.merchantId, input: { primaryColor: "red", secondaryColor: "#abcdef", theme: "light" }}), /hex color/);
+  await assert.rejects(() => updateMerchantBranding({ db, merchantId: merchant.merchantId, input: { primaryColor: "#12345", secondaryColor: "#abcdef", theme: "light" }}), /hex color/);
   await assert.rejects(() => updateLoyaltyConfig({ db, merchantId: merchant.merchantId, input: { pointsPerUnit: 0, minimumRewardPoints: 50, maxPointsPerTransaction: 1000 }}), /pointsPerUnit/);
   await db.doc("merchantUsers/" + uid).delete(); await db.recursiveDelete(db.doc("merchants/" + merchant.merchantId));
 });
@@ -52,6 +52,6 @@ test("tenant configuration cannot cross merchant boundaries", async () => {
 
 test("normalizers reject unsafe product configuration", () => {
   assert.throws(() => normalizeProfile({ name: "A" }), /name must contain/);
-  assert.throws(() => normalizeBranding({ primaryColor: "#123456", secondaryColor: "rgb(1,2,3)", theme: "light" }), /hex color/);
+  assert.throws(() => normalizeBranding({ primaryColor: "#123456", secondaryColor: "123456", theme: "light" }), /hex color/);
   assert.throws(() => normalizeLoyalty({ pointsPerUnit: 1, minimumRewardPoints: 0, maxPointsPerTransaction: 100 }), /minimumRewardPoints/);
 });
