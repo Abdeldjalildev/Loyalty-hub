@@ -3,7 +3,7 @@ import { UserPlus } from 'lucide-react';
 import { useApp } from '../../context/useApp';
 
 interface CustomerFormProps {
-  onSubmitCustomer: (name: string, email: string, phone: string) => void;
+  onSubmitCustomer: (name: string, email: string, phone: string) => void | Promise<void>;
 }
 
 export const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmitCustomer }) => {
@@ -12,7 +12,7 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmitCustomer }) 
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !phone) return;
     onSubmitCustomer(name, email, phone);
