@@ -57,7 +57,7 @@ export const LoyaltyProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setCustomers(prev => prev.map(customer => customer.id === customerId ? { ...customer, points: result.balanceAfter } : customer));
     await reload();
     return result;
-  }, [session]);
+  }, [reload, session]);
 
   const addNewCustomer = useCallback(async (name: string, email: string, phone: string) => {
     if (!session) throw new Error('Authentication is required.');
