@@ -33,7 +33,7 @@ test("customer identity cannot be rebound across merchants", async () => {
   const merchantB = "phase5-b-" + Date.now();
   const email = "rebind-" + Date.now() + "@example.test";
   await createCustomer(db, merchantA, { name: "A", email, phone: "" });
-  await createCustomer(db, merchantB, { name: "B", email: "other-" + Date.now() + "@example.test", phone: "" });
+  await createCustomer(db, merchantB, { name: "Customer B", email: "other-" + Date.now() + "@example.test", phone: "" });
   await provisionCustomer({ db, uid: "phase5-uid-rebind", email, merchantId: merchantA });
   await assert.rejects(
     () => provisionCustomer({ db, uid: "phase5-uid-rebind", email, merchantId: merchantB }),
@@ -66,8 +66,8 @@ test("customer context cannot cross into another tenant", async () => {
   const merchantA = "phase5-cross-a-" + Date.now();
   const merchantB = "phase5-cross-b-" + Date.now();
   const emailA = "cross-a-" + Date.now() + "@example.test";
-  const customerA = await createCustomer(db, merchantA, { name: "A", email: emailA, phone: "" });
-  await createCustomer(db, merchantB, { name: "B", email: "cross-b-" + Date.now() + "@example.test", phone: "" });
+  const customerA = await createCustomer(db, merchantA, { name: "Customer A", email: emailA, phone: "" });
+  await createCustomer(db, merchantB, { name: "Customer B", email: "cross-b-" + Date.now() + "@example.test", phone: "" });
   await provisionCustomer({ db, uid: "phase5-cross-uid", email: emailA, merchantId: merchantA });
   const own = await getCustomerContext({ db, uid: "phase5-cross-uid", email: emailA });
   assert.equal(own.customerId, customerA.id);
