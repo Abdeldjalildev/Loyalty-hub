@@ -1,7 +1,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const admin = require("firebase-admin");
-const { normalizeCustomer, validatePoints, validateReward, createCustomer, issuePoints, archiveCustomer, ensureLoyaltyProgram, listLoyaltyData } = require("./loyalty");
+const { normalizeCustomer, validatePoints, validateReward, createCustomer, issuePoints, archiveCustomer, ensureLoyaltyProgram, listLoyaltyData, createQrToken, redeemReward, parseQrPayload } = require("./loyalty");
 const PROJECT_ID = process.env.GCLOUD_PROJECT || "loyal-hub-project";
 if (!admin.apps.length) admin.initializeApp({ projectId: PROJECT_ID });
 const db = admin.firestore();
