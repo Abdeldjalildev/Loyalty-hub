@@ -7,9 +7,10 @@ interface LoyaltyCardProps {
   customerId: string;
   customerName: string;
   points: number;
+  qrPayload: string;
 }
 
-export const LoyaltyCard: React.FC<LoyaltyCardProps> = ({ customerId, customerName, points }) => {
+export const LoyaltyCard: React.FC<LoyaltyCardProps> = ({ customerId, customerName, points, qrPayload }) => {
   const { t } = useApp();
 
   return (
@@ -27,8 +28,12 @@ export const LoyaltyCard: React.FC<LoyaltyCardProps> = ({ customerId, customerNa
       </div>
 
       {/* QR Code Dynamic Generator */}
-      <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-inner inline-block my-2">
-        <QRCodeSVG value={customerId} size={160} level="H" includeMargin={false} />
+      <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-inner inline-block my-2 min-h-[192px] min-w-[192px] flex items-center justify-center">
+        {qrPayload ? (
+          <QRCodeSVG value={qrPayload} size={160} level="H" includeMargin={false} />
+        ) : (
+          <span className="text-xs text-gray-400">Generating secure QR…</span>
+        )}
       </div>
       
       <p className="text-xs text-gray-400 mt-3 flex items-center gap-1 justify-center">

@@ -15,10 +15,14 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmitCustomer }) 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !phone) return;
-    onSubmitCustomer(name, email, phone);
-    setName('');
-    setEmail('');
-    setPhone('');
+    try {
+      await onSubmitCustomer(name, email, phone);
+      setName('');
+      setEmail('');
+      setPhone('');
+    } catch {
+      // Keep entered values so the merchant can retry after a server-side failure.
+    }
   };
 
   return (

@@ -47,6 +47,9 @@ const {
   createReward,
   updateReward,
   issuePoints,
+  createQrToken,
+  redeemReward,
+  listTransactions,
 } = require("./loyalty");
 
 async function requireMerchantContext(request) {
@@ -97,5 +100,37 @@ exports.updateReward = onCall((request) => runMerchantMutation(request, (merchan
 ));
 
 exports.issuePoints = onCall((request) => runMerchantMutation(request, (merchantId) =>
-  issuePoints(db, merchantId, request.data?.customerId, request.data?.points)
+  issuePoints(
+    db,
+    merchantId,
+    request.data?.customerId,
+    request.data?.points,
+    request.auth.uid,
+    request.data?.idempotencyKey
+  )
 ));
+
+
+exports.createQrToken = onCall((request) => runMerchantMutation(request, (merchantId) =>
+  createQrToken(db, merchantId, request.data?.customerId, request.auth.uid)
+));
+
+exports.redeemReward = onCall((request) => runMerchantMutation(request, (merchantId) =>
+  redeemReward(
+    db,
+    merchantId,
+    request.data?.qrPayload,
+    request.data?.rewardId,
+    request.auth.uid,
+    request.data?.idempotencyKey
+  )
+));
+
+exports.listTransactions = onCall(async (request) => {
+  const merchantId = await requireMerchantContext(request);
+  try {
+    return { transactions: await listTransactions(db, merchantId, request.data?.customerId) };
+  } catch (error) {
+    throw new HttpsError("internal", error instanceof Error ? error.message : "TRANSACTION_LOAD_FAILED");
+  }
+});
