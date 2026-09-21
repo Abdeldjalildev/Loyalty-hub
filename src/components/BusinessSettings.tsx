@@ -72,7 +72,7 @@ export const BusinessSettings: React.FC = () => {
     catch (error) { setStatus(error instanceof Error ? error.message : 'REWARD_UPDATE_FAILED'); }
   };
 
-  return <section className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-150 dark:border-gray-700 p-6">
+  return <section id="business-settings" className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-150 dark:border-gray-700 p-6">
     <div className="flex items-center gap-3 mb-6"><Settings2 size={20} style={{ color: 'var(--lh-primary)' }} /><div><h2 className="text-xl font-bold">Business settings</h2><p className="text-sm text-gray-500">Configure this merchant without changing source code.</p></div></div>
     <div className="grid lg:grid-cols-2 gap-6">
       <div className="space-y-4">

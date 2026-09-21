@@ -4,10 +4,10 @@ LoyaltyHub is a modern, interactive web application designed to manage customer 
 
 ---
 
-## ✨ Features
+## ✨ Features\n\n- Client onboarding checklist for merchant setup readiness.\n- Repeatable authenticated demo-tenant seed for sales presentations.\n- Deployment and client-handoff documentation.
 
 - Merchant Dashboard: Track total customers, points in circulation, and customer analytics using interactive charts.
-- Customer Portal & Simulator: Allows users to view their loyalty passes, current point balances, and available rewards catalogs.
+- Customer Portal: customers can securely view their loyalty pass, current balance, rewards and transaction history.
 - QR Code System: Quick scanning and verification for customer accounts.
 - Dark / Light Mode: Fully responsive UI supporting both dark and light themes for an optimal user experience.
 
