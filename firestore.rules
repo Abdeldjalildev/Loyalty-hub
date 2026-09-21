@@ -6,25 +6,15 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    function merchantForUser() {
-      return get(/databases/$(database)/documents/merchantUsers/$(request.auth.uid)).data.merchantId;
-    }
-
-    function ownsMerchant(merchantId) {
-      return signedIn() && merchantForUser() == merchantId;
-    }
-
     match /merchantUsers/{authUid} {
       allow get: if signedIn() && request.auth.uid == authUid;
       allow list, create, update, delete: if false;
     }
 
     match /merchants/{merchantId} {
-      allow get: if ownsMerchant(merchantId);
-      allow list: if false;
-      allow create, update, delete: if false;
+      allow read, write: if false;
       match /{document=**} {
-        allow read, write: if ownsMerchant(merchantId);
+        allow read, write: if false;
       }
     }
 
