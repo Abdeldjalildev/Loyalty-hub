@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import { X } from 'lucide-react';
-import { useApp } from '../context/AppContext';
+import { useApp } from '../context/useApp';
 
 interface QrScannerModalProps {
   isOpen: boolean;
