@@ -1,6 +1,6 @@
 # Phase 4 — Gate 4: Secure QR
 
-**Status: IMPLEMENTED / PENDING FINAL CI**
+**Status: PASS / CLOSED**
 
 Customer QR artifacts now use opaque random tokens instead of raw customer IDs.
 
@@ -17,4 +17,4 @@ Design:
 
 A replayed or expired QR cannot authorize another redemption.
 
-Final PASS requires green CI evidence.
+Evidence: Phase 4 PR GitHub Actions run #43 (`35641378014`) passed frontend and Firebase foundation; Firebase emulator tests: 12/12 passed. Main verification run #44 (`35641526182`) also passed frontend and Firebase foundation.
