@@ -12,7 +12,8 @@ export const MerchantDashboard: React.FC = () => {
   const { customers, campaigns, addPoints, addNewCustomer, redeemReward, loading, error, reload } = useLoyalty();
   const { t } = useApp();
   const [isScannerOpen, setIsScannerOpen] = useState(false);
-  const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);\n  const [query, setQuery] = useState('');
+  const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
+  const [query, setQuery] = useState('');
   const toastTimer = useRef<number | undefined>(undefined);
 
   const triggerToast = (msg: string, type: 'success' | 'error') => setToast({ msg, type });
