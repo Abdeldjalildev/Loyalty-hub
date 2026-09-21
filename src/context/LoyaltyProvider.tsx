@@ -40,7 +40,10 @@ export const LoyaltyProvider: React.FC<{ children: React.ReactNode }> = ({ child
   }, [merchant, session]);
 
   useEffect(() => {
-    void reload();
+    const timer = window.setTimeout(() => {
+      void reload();
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, [reload]);
 
   const addPoints = useCallback(async (customerId: string, points: number) => {
