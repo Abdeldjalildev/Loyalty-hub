@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useLoyalty } from '../context/useLoyalty';
 import { useApp } from '../context/useApp';
-import { PlusCircle, QrCode, Search, RefreshCw, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { PlusCircle, QrCode, Search, RefreshCw, AlertCircle } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { QrScannerModal } from './QrScannerModal';
 import { StatsCards } from './merchant/StatsCards';
