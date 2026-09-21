@@ -1,6 +1,6 @@
 # Phase 5 — Gate 2: Customer Portal
 
-**Status: IMPLEMENTED / PENDING CI**
+**Status: PASS / CLOSED**
 
 A dedicated `/customer` SPA route provides:
 - authenticated customer identity;
