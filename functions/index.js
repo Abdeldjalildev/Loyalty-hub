@@ -4,6 +4,7 @@ const { getApps, initializeApp } = require("firebase-admin/app");
 const { getFirestore } = require("firebase-admin/firestore");
 const { ensureMerchantTenant } = require("./tenant");
 const { provisionCustomer, getCustomerContext } = require("./customer");
+const { updateMerchantProfile, updateMerchantBranding, updateLoyaltyConfig, getMerchantProductConfig } = require("./productization");
 
 setGlobalOptions({ region: "us-central1", maxInstances: 10 });
 if (getApps().length === 0) initializeApp();
@@ -73,6 +74,24 @@ async function runMerchantMutation(request, operation) {
     throw new HttpsError("invalid-argument", error instanceof Error ? error.message : "Invalid request.");
   }
 }
+
+exports.getMerchantProductConfig = onCall(async (request) => {
+  const merchantId = await requireMerchantContext(request);
+  try { return await getMerchantProductConfig({ db, merchantId }); }
+  catch (error) { throw new HttpsError("internal", error instanceof Error ? error.message : "PRODUCT_CONFIG_LOAD_FAILED"); }
+});
+
+exports.updateMerchantProfile = onCall((request) => runMerchantMutation(request, (merchantId) =>
+  updateMerchantProfile({ db, merchantId, input: request.data || {} })
+));
+
+exports.updateMerchantBranding = onCall((request) => runMerchantMutation(request, (merchantId) =>
+  updateMerchantBranding({ db, merchantId, input: request.data || {} })
+));
+
+exports.updateLoyaltyConfig = onCall((request) => runMerchantMutation(request, (merchantId) =>
+  updateLoyaltyConfig({ db, merchantId, input: request.data || {} })
+));
 
 exports.getLoyaltyData = onCall(async (request) => {
   const merchantId = await requireMerchantContext(request);
@@ -180,3 +199,4 @@ exports.createCustomerQrToken = onCall(async (request) => {
     throw new HttpsError("permission-denied", error instanceof Error ? error.message : "CUSTOMER_QR_FAILED");
   }
 });
+

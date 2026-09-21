@@ -33,7 +33,7 @@ async function ensureMerchantTenant({ db, uid, email, displayName }) {
     transaction.create(merchantRef, {
       merchantId, name: normalizedName, ownerUid: uid,
       ownerEmail: typeof email === "string" ? email.trim().toLowerCase() : null,
-      status: "active", createdAt: now, updatedAt: now,
+      status: "active", description: "", phone: "", websiteUrl: "", instagramUrl: "", facebookUrl: "", whatsappUrl: "", logoUrl: "", branding: { primaryColor: "#4f46e5", secondaryColor: "#06b6d4", theme: "light" }, createdAt: now, updatedAt: now,
     });
     transaction.create(userRef, {
       authUid: uid, merchantId, role: "owner", status: "active",
@@ -46,4 +46,10 @@ async function ensureMerchantTenant({ db, uid, email, displayName }) {
   return { merchantId: finalMapping.data().merchantId, ...finalMerchant.data() };
 }
 
-module.exports = { ensureMerchantTenant };
+async function getMerchantProfile({ db, merchantId }) {
+  const snapshot = await db.doc("merchants/" + merchantId).get();
+  if (!snapshot.exists || snapshot.data().status !== "active") throw new Error("Merchant tenant is not active");
+  return { merchantId, ...snapshot.data() };
+}
+
+module.exports = { ensureMerchantTenant, getMerchantProfile };

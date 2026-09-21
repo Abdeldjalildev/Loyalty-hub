@@ -2,15 +2,15 @@ import React from 'react';
 import { useApp } from '../context/useApp';
 import { Sun, Moon, Globe, LogOut } from 'lucide-react';
 
-interface NavbarProps { onSignOut: () => void; merchantName: string; }
+interface NavbarProps { onSignOut: () => void; merchantName: string; logoUrl?: string; primaryColor?: string; }
 
-export const Navbar: React.FC<NavbarProps> = ({ onSignOut, merchantName }) => {
+export const Navbar: React.FC<NavbarProps> = ({ onSignOut, merchantName, logoUrl, primaryColor = '#4f46e5' }) => {
   const { theme, toggleTheme, lang, setLang, t } = useApp();
   return (
     <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-750 shadow-sm transition-colors duration-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div className="flex items-center justify-between h-16 gap-4">
         <div className="flex items-center space-x-2 rtl:space-x-reverse min-w-0">
-          <div className="bg-indigo-600 p-2 rounded-lg text-white"><span className="font-bold text-xl tracking-wider">LH</span></div>
+          <div className="p-1.5 rounded-lg text-white overflow-hidden" style={{ backgroundColor: primaryColor }}>{logoUrl ? <img src={logoUrl} alt="" className="h-7 w-7 object-cover rounded" /> : <span className="font-bold text-xl tracking-wider">LH</span>}</div>
           <div className="min-w-0"><span className="font-bold text-lg text-gray-900 dark:text-white hidden sm:block">{t('navBrand')}</span><span className="text-xs text-gray-500 dark:text-gray-400 truncate block">{merchantName}</span></div>
         </div>
         <div className="flex items-center space-x-4 rtl:space-x-reverse">
