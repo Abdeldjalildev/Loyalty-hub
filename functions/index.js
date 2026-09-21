@@ -2,7 +2,8 @@ const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { setGlobalOptions } = require("firebase-functions/v2");
 const { getApps, initializeApp } = require("firebase-admin/app");
 const { getFirestore } = require("firebase-admin/firestore");
-const { ensureMerchantTenant } = require("./tenant");
+const { ensureMerchantTenant, getMerchantProfile } = require("./tenant");
+const { updateMerchantProfile, updateMerchantBranding } = require("./merchant-profile");
 const { provisionCustomer, getCustomerContext } = require("./customer");
 const { updateMerchantProfile, updateMerchantBranding, updateLoyaltyConfig, getMerchantProductConfig } = require("./productization");
 
@@ -53,6 +54,7 @@ const {
   redeemReward,
   listTransactions,
   listCustomerPortalData,
+  updateLoyaltyProgram,
 } = require("./loyalty");
 
 async function requireMerchantContext(request) {
@@ -198,4 +200,23 @@ exports.createCustomerQrToken = onCall(async (request) => {
   } catch (error) {
     throw new HttpsError("permission-denied", error instanceof Error ? error.message : "CUSTOMER_QR_FAILED");
   }
+});
+
+
+exports.updateMerchantProfile = onCall(async (request) => {
+  const merchantId = await requireMerchantContext(request);
+  try { return await updateMerchantProfile({ db, merchantId, input: request.data || {} }); }
+  catch (error) { throw new HttpsError("invalid-argument", error instanceof Error ? error.message : "MERCHANT_PROFILE_UPDATE_FAILED"); }
+});
+
+exports.updateMerchantBranding = onCall(async (request) => {
+  const merchantId = await requireMerchantContext(request);
+  try { return await updateMerchantBranding({ db, merchantId, input: request.data || {} }); }
+  catch (error) { throw new HttpsError("invalid-argument", error instanceof Error ? error.message : "MERCHANT_BRANDING_UPDATE_FAILED"); }
+});
+
+exports.updateLoyaltyProgram = onCall(async (request) => {
+  const merchantId = await requireMerchantContext(request);
+  try { return await updateLoyaltyProgram(db, merchantId, request.data || {}); }
+  catch (error) { throw new HttpsError("invalid-argument", error instanceof Error ? error.message : "LOYALTY_PROGRAM_UPDATE_FAILED"); }
 });
