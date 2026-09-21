@@ -686,6 +686,13 @@ Current status:
 - Phase 1 — Gate 4: **PASS / CLOSED**.
 - Phase 1 — Gate 5: **PASS / CLOSED**.
 - Phase 1: **PASS / CLOSED**.
+- Phase 2 — Gate 1: **PASS / CLOSED**.
+- Phase 2 — Gate 2: **PASS / CLOSED**.
+- Phase 2 — Gate 3: **PASS / CLOSED**.
+- Phase 2 — Gate 4: **PASS / CLOSED**.
+- Phase 2 — Gate 5: **PASS / CLOSED**.
+- Phase 2: **PASS / CLOSED**.
+- Phase 2 final CI evidence: GitHub Actions run #30 (`35637637018`) — frontend and Firebase foundation both succeeded; emulator tests: 3/3 passed, including cross-merchant isolation.
 - Gate 1 baseline report: `docs/phase-0/PHASE-0-GATE-1-REPORT.md`.
 - Gate 2 contract report: `docs/phase-0/PHASE-0-GATE-2-REPORT.md`.
 - Gate 3 domain report: `docs/phase-0/PHASE-0-GATE-3-REPORT.md`.
@@ -696,10 +703,15 @@ Current status:
 - Phase 1 Gate 3 report: `docs/phase-1/PHASE-1-GATE-3-REPORT.md`.
 - Phase 1 Gate 4 report: `docs/phase-1/PHASE-1-GATE-4-REPORT.md`.
 - Phase 1 Gate 5 report: `docs/phase-1/PHASE-1-GATE-5-REPORT.md`.
+- Phase 2 Gate 1 report: `docs/phase-2/PHASE-2-GATE-1-REPORT.md`.
+- Phase 2 Gate 2 report: `docs/phase-2/PHASE-2-GATE-2-REPORT.md`.
+- Phase 2 Gate 3 report: `docs/phase-2/PHASE-2-GATE-3-REPORT.md`.
+- Phase 2 Gate 4 report: `docs/phase-2/PHASE-2-GATE-4-REPORT.md`.
+- Phase 2 Gate 5 report: `docs/phase-2/PHASE-2-GATE-5-REPORT.md`.
 - No product source files were modified during Gates 1–3.
 - Phase 0 is fully closed.
 - Phase 1 is fully closed.
-- The next authorized step is Phase 2 — Gate 1: Merchant Identity.
+- The next authorized step is Phase 3 — Gate 1: Customer Persistence.
 - Phase 1 CI/runtime evidence is confirmed by GitHub Actions run #26 (`35636482998`): frontend and firebase-foundation both succeeded.
 - The selected Firebase project for the implementation is `loyal-hub-project`; Phase 2 must explicitly verify and wire the repository to this project through safe environment/deployment configuration without committing secrets.
 - No production business logic should be invented from memory; inspect the current repository before each implementation step.
