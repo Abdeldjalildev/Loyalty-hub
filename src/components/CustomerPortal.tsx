@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useLoyalty } from '../context/LoyaltyContext';
-import { useApp } from '../context/AppContext';
+import { useLoyalty } from '../context/useLoyalty';
+import { useApp } from '../context/useApp';
 import { Gift, CheckCircle, XCircle } from 'lucide-react';
 import { CustomerSimulator } from './customer/CustomerSimulator';
 import { LoyaltyCard } from './customer/LoyaltyCard';
