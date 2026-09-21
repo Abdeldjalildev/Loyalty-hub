@@ -285,10 +285,8 @@ async function redeemReward(db, merchantId, qrPayload, rewardId, actorUid, idemp
       return;
     }
 
-    const [tokenSnapshot, rewardSnapshot] = await Promise.all([
-      transaction.get(tokenRef),
-      transaction.get(rewardRef),
-    ]);
+    const tokenSnapshot = await transaction.get(tokenRef);
+    const rewardSnapshot = await transaction.get(rewardRef);
     if (!tokenSnapshot.exists) throw new Error("QR token not found");
     const tokenData = tokenSnapshot.data();
     if (tokenData.status !== "active" || tokenData.consumedAt) throw new Error("QR token has already been used");
