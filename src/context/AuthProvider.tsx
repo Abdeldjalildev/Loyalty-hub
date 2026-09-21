@@ -77,12 +77,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } finally { setLoading(false); }
   }, []);
 
+  const refreshMerchant = useCallback(async () => {
+    if (!session) return;
+    const context = await loadMerchant(session);
+    setMerchant(context);
+  }, [loadMerchant, session]);
+
   const signOut = useCallback(() => {
     clearSession(); setSession(null); setMerchant(null); setError(null);
   }, []);
 
   return (
-    <AuthContext.Provider value={{ session, merchant, loading, error, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ session, merchant, loading, error, signIn, signUp, signOut, refreshMerchant }}>
       {children}
     </AuthContext.Provider>
   );
