@@ -8,7 +8,7 @@ import { StatsCards } from './merchant/StatsCards';
 import { CustomerForm } from './merchant/CustomerForm';
 
 export const MerchantDashboard: React.FC = () => {
-  const { customers, addPoints, addNewCustomer, loading, error, reload } = useLoyalty();
+  const { customers, campaigns, addPoints, addNewCustomer, redeemReward, loading, error, reload } = useLoyalty();
   const { t } = useApp();
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
@@ -37,12 +37,32 @@ export const MerchantDashboard: React.FC = () => {
     } catch (actionError) {
       triggerToast(actionError instanceof Error ? actionError.message : 'POINTS_ISSUANCE_FAILED', 'error');
     }
-    void customerName;
   };
 
-  const handleScanSuccess = (customerId: string) => {
-    const found = customers.find(c => c.id === customerId);
-    triggerToast(found ? t('toastCustomerFound') + found.name : t('toastCustomerNotFound'), found ? 'success' : 'error');
+  const handleScanSuccess = async (qrPayload: string) => {
+    if (!qrPayload.startsWith('LHY2:')) {
+      triggerToast(t('toastCustomerNotFound'), 'error');
+      return;
+    }
+    if (campaigns.length === 0) {
+      triggerToast('No active rewards are configured.', 'error');
+      return;
+    }
+    const options = campaigns.map((reward, index) => `${index + 1}. ${reward.titleEn} — ${reward.pointsRequired} PTS`).join('\n');
+    const choice = window.prompt(`Choose the reward to redeem:\n${options}\n\nEnter reward number:`);
+    if (choice == null) return;
+    const index = Number(choice) - 1;
+    const reward = Number.isSafeInteger(index) ? campaigns[index] : undefined;
+    if (!reward) {
+      triggerToast('Invalid reward selection.', 'error');
+      return;
+    }
+    try {
+      const result = await redeemReward(qrPayload, reward.id);
+      triggerToast(`Reward redeemed. ${result.pointsCost} points deducted.`, 'success');
+    } catch (actionError) {
+      triggerToast(actionError instanceof Error ? actionError.message : 'REDEMPTION_FAILED', 'error');
+    }
   };
 
   const totalCustomers = customers.length;
@@ -156,7 +176,7 @@ export const MerchantDashboard: React.FC = () => {
       )}
 
       <div className="text-xs text-gray-400 dark:text-gray-500 text-center">
-        Point issuance is server-authoritative. Redemption and transaction history remain disabled until Phase 4.
+        Point issuance and redemption are server-authoritative. Each redemption consumes a short-lived single-use QR token and creates an immutable transaction.
       </div>
     </div>
   );
