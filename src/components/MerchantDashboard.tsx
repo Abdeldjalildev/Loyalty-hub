@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLoyalty } from '../context/LoyaltyContext';
 import { useApp } from '../context/AppContext';
 import { PlusCircle, QrCode } from 'lucide-react';
@@ -15,6 +15,7 @@ export const MerchantDashboard: React.FC = () => {
   const { customers, campaigns, addPoints, redeemReward, addNewCustomer } = useLoyalty();
   const { t, lang } = useApp();
 
+  const transactionSequence = useRef(0);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
   const [transactions, setTransactions] = useState<Array<{
@@ -39,7 +40,7 @@ export const MerchantDashboard: React.FC = () => {
 
   const addTransaction = (customerName: string, type: 'add' | 'redeem', amountOrReward: string) => {
     const newTx = {
-      id:` TX-${Math.floor(1000 + Math.random() * 9000)}`,
+      id: `TX-${++transactionSequence.current}`,
       customerName,
       type,
       amountOrReward,
