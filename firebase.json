@@ -1,8 +1,21 @@
 {
-  "firestore": {"rules":"firestore.rules","indexes":"firestore.indexes.json"},
-  "functions": {"source":"functions","runtime":"nodejs20"},
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "functions": {
+    "source": "functions",
+    "runtime": "nodejs20"
+  },
+  "auth": {
+    "providers": {
+      "emailPassword": true
+    }
+  },
   "emulators": {
-    "auth":{"port":9099},"firestore":{"port":8080},
-    "functions":{"port":5001},"ui":{"enabled":true,"port":4400}
+    "auth": { "port": 9099 },
+    "firestore": { "port": 8080 },
+    "functions": { "port": 5001 },
+    "ui": { "enabled": true, "port": 4400 }
   }
 }
