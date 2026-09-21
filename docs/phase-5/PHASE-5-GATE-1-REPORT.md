@@ -1,6 +1,6 @@
 # Phase 5 — Gate 1: Customer Identity
 
-**Status: IMPLEMENTED / PENDING CI**
+**Status: PASS / CLOSED**
 
 Customer identity is separated from merchant identity using Firebase Auth plus a server-authoritative `customerUsers/{authUid}` mapping.
 
