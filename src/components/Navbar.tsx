@@ -1,6 +1,6 @@
 import React from 'react';
 import { useApp } from '../context/useApp';
-import { Sun, Moon, Globe, ShieldCheck, LogOut } from 'lucide-react';
+import { Sun, Moon, Globe, LogOut } from 'lucide-react';
 
 interface NavbarProps { onSignOut: () => void; merchantName: string; }
 
