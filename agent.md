@@ -482,38 +482,16 @@ A new client can be configured through product data/settings rather than source 
 
 ### Phase 9 — Client-Ready Product
 
-**Status: IMPLEMENTED / PENDING CI**
+**Status: PASS / CLOSED**
 
-Goal: turn the hardened product into a repeatable client onboarding, demo, deployment and handoff package.
+- Gate 1 — Demo Tenant: PASS / CLOSED
+- Gate 2 — Client Onboarding: PASS / CLOSED
+- Gate 3 — Deployment & Handoff: PASS / CLOSED
+- Gate 4 — Sales Demo Validation: PASS / CLOSED
+- Gate 5 — Closure: PASS / CLOSED
+- Branch CI Run #97 (`35649226965`) — SUCCESS
+- PR #8 merged to main (squash merge `299d17c20f51897c6a69534fdc9b8c5e955252cc`)
+- Main post-merge CI Run #98 (`35649356201`) — SUCCESS
+- Phase 9 fully closed
+- This completes the approved 10-phase roadmap.
 
-#### Gate 1 — Demo Tenant
-- deterministic demo tenant seed;
-- authenticated merchant demo account created from supplied environment credentials;
-- sample customer, rewards, branding and loyalty rules;
-- no credentials committed to source control.
-
-#### Gate 2 — Client Onboarding
-- in-product onboarding checklist;
-- business profile, branding, loyalty rules, rewards and customer readiness checks;
-- direct link to Business Settings.
-
-#### Gate 3 — Deployment & Handoff
-- documented Firebase + Vercel deployment contract;
-- environment/secret handling;
-- deployment and handoff checklist.
-
-#### Gate 4 — Sales Demo Validation
-- documented end-to-end sales demonstration flow;
-- automated validation of demo data;
-- relies on existing transaction, customer and hardening suites for security-critical flow coverage.
-
-#### Gate 5 — Closure
-- CI, merge and post-merge verification;
-- closure evidence recorded in agent.md.
-
-**Phase 9 is not closed until all evidence is present.**
-
----
-
-### Phase 10
-Not part of the approved 10-phase roadmap. Do not start additional implementation after Phase 9 without explicit scope approval.
