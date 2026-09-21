@@ -80,6 +80,8 @@ async function ensureLoyaltyProgram(db, merchantId) {
           merchantId,
           name: "Default Loyalty Program",
           pointsPerUnit: 1,
+          minimumRewardPoints: 1,
+          maxPointsPerTransaction: 1000000,
           status: "active",
           createdAt: FieldValue.serverTimestamp(),
           updatedAt: FieldValue.serverTimestamp(),
