@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { UserPlus } from 'lucide-react';
-import { useApp } from '../../context/AppContext';
+import { useApp } from '../../context/useApp';
 
 interface CustomerFormProps {
   onSubmitCustomer: (name: string, email: string, phone: string) => void;
