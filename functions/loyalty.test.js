@@ -115,7 +115,7 @@ test("concurrent redemption attempts cannot spend the same QR token twice", asyn
 });
 
 test("invalid or raw customer identifiers cannot be used as secure QR payloads", async () => {
-  assert.throws(() => parseQrPayload("customer-id-123"), /Invalid QR payload/);
+  assert.throws(() => parseQrPayload("customer-id-123"), /qrPayload must contain|Invalid QR payload/);
   assert.throws(() => parseQrPayload("LHY2:short"), /Invalid QR token/);
 });
 
