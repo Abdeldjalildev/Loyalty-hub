@@ -75,7 +75,7 @@ export async function signIn(email: string, password: string) {
   save(session);
   return session;
 }
-export async function refreshSession(session: AuthSession): Promise<AuthSession> {
+export async function refreshSession(session: AuthSession, storageKey = STORAGE_KEY): Promise<AuthSession> {
   if (!firebaseApiKey) throw new Error('FIREBASE_API_KEY_MISSING');
   const form = new URLSearchParams({ grant_type: 'refresh_token', refresh_token: session.refreshToken });
   const response = await request<{ id_token: string; refresh_token: string; user_id: string; expires_in: string }>(
@@ -84,7 +84,7 @@ export async function refreshSession(session: AuthSession): Promise<AuthSession>
   );
   const next = { ...session, uid: response.user_id, idToken: response.id_token,
     refreshToken: response.refresh_token, expiresAt: Date.now() + Number(response.expires_in) * 1000 };
-  save(next);
+  save(next, storageKey);
   return next;
 }
 
@@ -116,4 +116,5 @@ export async function signInCustomer(email: string, password: string) {
   return session;
 }
 export function loadCustomerSession() { return loadSession(CUSTOMER_STORAGE_KEY); }
+export async function refreshCustomerSession(session: AuthSession) { return refreshSession(session, CUSTOMER_STORAGE_KEY); }
 export function clearCustomerSession() { clearSession(CUSTOMER_STORAGE_KEY); }
