@@ -1,7 +1,7 @@
 import React from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { QrCode } from 'lucide-react';
-import { useApp } from '../../context/AppContext';
+import { useApp } from '../../context/useApp';
 
 interface LoyaltyCardProps {
   customerId: string;
