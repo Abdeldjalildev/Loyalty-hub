@@ -2,7 +2,11 @@
 
 ## Current status
 
-**IMPLEMENTED / PENDING CI**
+**PASS / CLOSED**
+
+## Final verification
+
+GitHub Actions branch run #67 (`35644827997`) passed `frontend` and `firebase-foundation`; Firebase test suite: 20/20 passed. PR #5 was merged to `main` with merge commit `253d4416fa1bfa5add22c645ef8c69e712365c13`. Post-merge main run #68 (`35644995825`) passed `frontend` and `firebase-foundation`.
 
 ## Scope delivered
 
@@ -21,6 +25,4 @@
 - Billing/subscriptions.
 - Advanced analytics.
 
-## Evidence
-
-Final PASS / CLOSED is intentionally withheld until branch CI and post-merge main CI are green.
+Phase 6 is fully closed. The next authorized step is Phase 7 — Gate 1: Merchant UX.
