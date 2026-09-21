@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLoyalty } from '../context/useLoyalty';
 import { useApp } from '../context/useApp';
 import { Gift, CheckCircle, XCircle } from 'lucide-react';
@@ -14,7 +14,7 @@ export const CustomerPortal: React.FC = () => {
   const { t, lang } = useApp();
   
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>(customers[0]?.id || '');
-  const currentCustomer = customers.find(c => c.id === selectedCustomerId);
+  const currentCustomer = customers.find(c => c.id === selectedCustomerId);\n\n  useEffect(() => {\n    if (!selectedCustomerId && customers[0]) setSelectedCustomerId(customers[0].id);\n  }, [customers, selectedCustomerId]);
 
   return (
     <div className="space-y-8 animate-fade-in">
