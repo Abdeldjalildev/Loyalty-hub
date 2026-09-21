@@ -367,11 +367,17 @@ async function redeemReward(db, merchantId, qrPayload, rewardId, actorUid, idemp
 }
 
 async function listTransactions(db, merchantId, customerId) {
-  const query = db.collection("merchants/" + merchantId + "/transactions").orderBy("createdAt", "desc").limit(100);
+  const collection = db.collection("merchants/" + merchantId + "/transactions");
   const snapshot = customerId
-    ? await query.where("customerId", "==", requiredString(customerId, "customerId", 1, 128)).get()
-    : await query.get();
-  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    ? await collection.where("customerId", "==", requiredString(customerId, "customerId", 1, 128)).limit(100).get()
+    : await collection.limit(100).get();
+  return snapshot.docs
+    .map((doc) => ({ id: doc.id, ...doc.data() }))
+    .sort((a, b) => {
+      const aMs = a.createdAt?.toMillis?.() || 0;
+      const bMs = b.createdAt?.toMillis?.() || 0;
+      return bMs - aMs;
+    });
 }
 
 module.exports = {
