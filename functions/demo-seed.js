@@ -1,4 +1,5 @@
 const { FieldValue } = require('firebase-admin/firestore');
+const { getAuth } = require('firebase-admin/auth');
 
 const DEMO_MERCHANT_ID = 'demo-merchant';
 const DEMO_CUSTOMER_ID = 'demo-customer-001';
@@ -26,8 +27,8 @@ function buildDemoMerchant() {
   };
 }
 
-async function seedDemoTenant(db) {
-  const merchantRef = db.doc('merchants/' + DEMO_MERCHANT_ID);
+async function ensureDemoAuthUser({ email, password, displayName }) {\n  if (!email || !password) throw new Error('DEMO_MERCHANT_EMAIL and DEMO_MERCHANT_PASSWORD are required');\n  const auth = getAuth();\n  let user;\n  try { user = await auth.getUserByEmail(email); }\n  catch (error) { if (error.code !== 'auth/user-not-found') throw error; user = await auth.createUser({ email, password, emailVerified: true, displayName }); }\n  if (!user.emailVerified) user = await auth.updateUser(user.uid, { emailVerified: true });\n  return user;\n}\n\nasync function seedDemoTenant(db) {
+  const demoEmail = process.env.DEMO_MERCHANT_EMAIL;\n  const demoPassword = process.env.DEMO_MERCHANT_PASSWORD;\n  const owner = await ensureDemoAuthUser({ email: demoEmail, password: demoPassword, displayName: 'LoyaltyHub Demo Café' });\n  const merchantRef = db.doc('merchants/' + DEMO_MERCHANT_ID);
   const customerRef = db.doc('merchants/' + DEMO_MERCHANT_ID + '/customers/' + DEMO_CUSTOMER_ID);
   await merchantRef.set({
     ...buildDemoMerchant(),
@@ -56,14 +57,14 @@ async function seedDemoTenant(db) {
     }, { merge: true });
   }
 
-  await customerRef.set({
+  await db.doc('merchantUsers/' + owner.uid).set({ authUid: owner.uid, merchantId: DEMO_MERCHANT_ID, role: 'owner', status: 'active', createdAt: FieldValue.serverTimestamp(), updatedAt: FieldValue.serverTimestamp() }, { merge: true });\n\n  await customerRef.set({
     customerId: DEMO_CUSTOMER_ID, merchantId: DEMO_MERCHANT_ID,
     name: 'Demo Customer', email: 'demo.customer@example.com', phone: '+213 555 111 111',
     points: 125, status: 'active', demo: true,
     createdAt: FieldValue.serverTimestamp(), updatedAt: FieldValue.serverTimestamp(),
   }, { merge: true });
 
-  return { merchantId: DEMO_MERCHANT_ID, customerId: DEMO_CUSTOMER_ID };
+  return { merchantId: DEMO_MERCHANT_ID, customerId: DEMO_CUSTOMER_ID, ownerUid: owner.uid };
 }
 
 module.exports = { DEMO_MERCHANT_ID, DEMO_CUSTOMER_ID, DEMO_REWARDS, buildDemoMerchant, seedDemoTenant };
