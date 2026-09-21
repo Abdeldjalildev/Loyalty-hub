@@ -1,6 +1,6 @@
 # Phase 5 — Gate 4: Customer Redemption E2E
 
-**Status: IMPLEMENTED / PENDING CI**
+**Status: PASS / CLOSED**
 
 The complete customer redemption path is wired:
 1. authenticated customer signs in;
