@@ -5,13 +5,8 @@ import './index.css';
 import { AppProvider } from './context/AppProvider.tsx';
 import { LoyaltyProvider } from './context/LoyaltyProvider.tsx';
 import { AuthProvider } from './context/AuthProvider.tsx';
+import { CustomerAuthProvider } from './context/CustomerAuthProvider.tsx';
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <AppProvider>
-      <AuthProvider>
-        <LoyaltyProvider><App /></LoyaltyProvider>
-      </AuthProvider>
-    </AppProvider>
-  </StrictMode>,
+  <StrictMode><AppProvider><AuthProvider><CustomerAuthProvider><LoyaltyProvider><App /></LoyaltyProvider></CustomerAuthProvider></AuthProvider></AppProvider></StrictMode>,
 );

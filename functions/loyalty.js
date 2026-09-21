@@ -392,6 +392,7 @@ module.exports = {
   validateReward,
   validateIdempotencyKey,
   parseQrPayload,
+  listCustomerPortalData,
   ensureLoyaltyProgram,
   listLoyaltyData,
   createCustomer,
@@ -404,3 +405,22 @@ module.exports = {
   redeemReward,
   listTransactions,
 };
+
+
+async function listCustomerPortalData(db, merchantId, customerId) {
+  await ensureLoyaltyProgram(db, merchantId);
+  const customerRef = db.doc("merchants/" + merchantId + "/customers/" + customerId);
+  const customerSnapshot = await customerRef.get();
+  if (!customerSnapshot.exists || customerSnapshot.data().status !== "active") throw new Error("Customer not found");
+  const [rewardsSnapshot, programSnapshot, transactionsSnapshot] = await Promise.all([
+    db.collection("merchants/" + merchantId + "/rewards").where("status", "==", "active").get(),
+    db.doc("merchants/" + merchantId + "/loyaltyPrograms/default").get(),
+    db.collection("merchants/" + merchantId + "/transactions").where("customerId", "==", customerId).orderBy("createdAt", "desc").limit(50).get(),
+  ]);
+  return {
+    customer: { id: customerSnapshot.id, ...customerSnapshot.data() },
+    program: { id: programSnapshot.id, ...programSnapshot.data() },
+    rewards: rewardsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
+    transactions: transactionsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
+  };
+}
