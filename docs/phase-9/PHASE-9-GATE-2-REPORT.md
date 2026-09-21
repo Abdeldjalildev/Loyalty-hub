@@ -1,7 +1,7 @@
 # Phase 9 — Gate 2: Client Onboarding
 
 ## Status
-IMPLEMENTED / PENDING CI
+PASS / CLOSED
 
 ## Scope
 Added an in-product onboarding checklist for merchant clients.
