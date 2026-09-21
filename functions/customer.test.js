@@ -57,7 +57,7 @@ test("customer portal QR can be redeemed only in its mapped tenant", async () =>
   const redeemed = await redeemReward(db, merchantId, qr.qrPayload, reward.id, "merchant-owner", "phase5-redeem-" + Date.now());
   assert.equal(redeemed.balanceAfter, 50);
   const context = await getCustomerContext({ db, uid: "phase5-uid-e2e", email });
-  assert.equal(context.customer.points, 0);
+  assert.equal(context.customer.points, 50);
   await db.recursiveDelete(db.doc("merchants/" + merchantId));
   await db.doc("customerUsers/phase5-uid-e2e").delete();
 });
