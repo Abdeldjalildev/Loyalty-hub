@@ -1,8 +1,8 @@
 # Phase 2 — Gate 5: Closure
 
-**Status: PENDING FINAL CI EVIDENCE**
+**Status: PASS / CLOSED**
 
-All implementation gates are complete in the Phase 2 branch. Final PASS/CLOSED is contingent on the GitHub Actions run for this branch proving:
+All implementation gates are complete. GitHub Actions run #30 (`35637637018`) is the final runtime evidence and proves:
 - frontend install/lint/build;
 - Functions syntax;
 - Auth emulator;
