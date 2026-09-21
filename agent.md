@@ -462,25 +462,58 @@ A new client can be configured through product data/settings rather than source 
 ---
 
 ### Phase 7 — Commercial UX & Analytics
-- Gate 1: PASS / CLOSED
-- Gate 2: PASS / CLOSED
-- Gate 3: PASS / CLOSED
-- Gate 4: PASS / CLOSED
-- Gate 5: PASS / CLOSED
-- Branch CI Run #79 (35646000565): SUCCESS
-- PR #6 merged to main
-- Post-merge main CI Run #83 (35646304633): SUCCESS
-- Phase 7 fully closed
-- Next authorized step: Phase 8 — Production Hardening
-- Gate 1: PASS / CLOSED
-- Gate 2: PASS / CLOSED
-- Gate 3: PASS / CLOSED
-- Gate 4: PASS / CLOSED
-- Gate 5: PASS / CLOSED
-- Branch CI Run #86 (`35647213632`) — SUCCESS
-- PR #7 merged to main (squash merge `d1f7e498616b056d08dfe5b4da219a0ca2131b89`)
-- Main post-merge CI Run #87 (`35647366192`) — SUCCESS
-- Phase 8 fully closed
-- Next authorized step: Phase 9 — Client-Ready Product
 
-Phase 9 — Client-Ready Product
+**Status: PASS / CLOSED**
+
+- Gate 1–5: PASS / CLOSED
+- Branch CI Run #79: SUCCESS
+- PR #6 merged to main
+- Post-merge main CI Run #83: SUCCESS
+
+### Phase 8 — Production Hardening
+
+**Status: PASS / CLOSED**
+
+- Gate 1–5: PASS / CLOSED
+- Branch CI Run #86: SUCCESS
+- PR #7 merged to main
+- Main post-merge CI Run #87: SUCCESS
+- Final documentation CI Run #94: SUCCESS
+
+### Phase 9 — Client-Ready Product
+
+**Status: IMPLEMENTED / PENDING CI**
+
+Goal: turn the hardened product into a repeatable client onboarding, demo, deployment and handoff package.
+
+#### Gate 1 — Demo Tenant
+- deterministic demo tenant seed;
+- authenticated merchant demo account created from supplied environment credentials;
+- sample customer, rewards, branding and loyalty rules;
+- no credentials committed to source control.
+
+#### Gate 2 — Client Onboarding
+- in-product onboarding checklist;
+- business profile, branding, loyalty rules, rewards and customer readiness checks;
+- direct link to Business Settings.
+
+#### Gate 3 — Deployment & Handoff
+- documented Firebase + Vercel deployment contract;
+- environment/secret handling;
+- deployment and handoff checklist.
+
+#### Gate 4 — Sales Demo Validation
+- documented end-to-end sales demonstration flow;
+- automated validation of demo data;
+- relies on existing transaction, customer and hardening suites for security-critical flow coverage.
+
+#### Gate 5 — Closure
+- CI, merge and post-merge verification;
+- closure evidence recorded in agent.md.
+
+**Phase 9 is not closed until all evidence is present.**
+
+---
+
+### Phase 10
+Not part of the approved 10-phase roadmap. Do not start additional implementation after Phase 9 without explicit scope approval.
