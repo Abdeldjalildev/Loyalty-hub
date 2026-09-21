@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useLoyalty } from '../context/useLoyalty';
 import { useApp } from '../context/useApp';
-import { PlusCircle, QrCode } from 'lucide-react';
+import { PlusCircle, QrCode, Search, RefreshCw, AlertCircle } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { QrScannerModal } from './QrScannerModal';
 import { StatsCards } from './merchant/StatsCards';
@@ -13,6 +13,7 @@ export const MerchantDashboard: React.FC = () => {
   const { t } = useApp();
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
+  const [query, setQuery] = useState('');
   const toastTimer = useRef<number | undefined>(undefined);
 
   const triggerToast = (msg: string, type: 'success' | 'error') => setToast({ msg, type });
@@ -66,6 +67,7 @@ export const MerchantDashboard: React.FC = () => {
     }
   };
 
+  const filteredCustomers = customers.filter(customer => { const q = query.trim().toLowerCase(); return !q || [customer.name, customer.email, customer.phone, customer.id].some(value => value.toLowerCase().includes(q)); });
   const totalCustomers = customers.length;
   const totalPoints = customers.reduce((sum, customer) => sum + customer.points, 0);
   const averagePoints = totalCustomers > 0 ? Math.round(totalPoints / totalCustomers) : 0;
@@ -76,8 +78,8 @@ export const MerchantDashboard: React.FC = () => {
       {loading && <div className="rounded-xl bg-indigo-50 dark:bg-indigo-950/30 px-4 py-3 text-sm text-indigo-700 dark:text-indigo-300">Loading persistent loyalty data…</div>}
       {error && (
         <div className="rounded-xl bg-rose-50 dark:bg-rose-950/30 px-4 py-3 text-sm text-rose-700 dark:text-rose-300 flex items-center justify-between gap-4">
-          <span>{error}</span>
-          <button onClick={() => void reload()} className="font-bold underline">Retry</button>
+          <span className="flex items-center gap-2"><AlertCircle size={16}/>{error}</span>
+          <button onClick={() => void reload()} className="inline-flex items-center gap-1 rounded-lg border px-3 py-1.5 font-bold hover:bg-white/60 dark:hover:bg-gray-800"><RefreshCw size={14}/>Retry</button>
         </div>
       )}
 
@@ -122,7 +124,7 @@ export const MerchantDashboard: React.FC = () => {
           </button>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="mb-4 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between"><label className="relative flex-1 max-w-xl"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search customers by name, email, phone or ID" className="w-full rounded-xl border px-9 py-2.5 bg-transparent dark:border-gray-600" /></label><span className="text-xs text-gray-500">{filteredCustomers.length} of {customers.length} customers</span></div>\n        <div className="overflow-x-auto">
           <table className="w-full text-right rtl:text-left text-sm">
             <thead className="bg-gray-50 dark:bg-gray-750 text-gray-500 dark:text-gray-400 text-xs uppercase">
               <tr>
@@ -134,7 +136,7 @@ export const MerchantDashboard: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-              {customers.map(customer => (
+              {filteredCustomers.map(customer => (
                 <tr key={customer.id} className="hover:bg-gray-50/50 dark:hover:bg-gray-750/30 transition">
                   <td className="px-6 py-4 font-mono text-xs text-indigo-600 dark:text-indigo-400 font-bold">{customer.id}</td>
                   <td className="px-6 py-4">
@@ -160,8 +162,8 @@ export const MerchantDashboard: React.FC = () => {
                   </td>
                 </tr>
               ))}
-              {!loading && customers.length === 0 && (
-                <tr><td colSpan={5} className="px-6 py-10 text-center text-gray-400">No active customers yet.</td></tr>
+              {!loading && filteredCustomers.length === 0 && (
+                <tr><td colSpan={5} className="px-6 py-10 text-center text-gray-400">{query ? 'No customers match your search.' : 'No active customers yet.'}</td></tr>
               )}
             </tbody>
           </table>

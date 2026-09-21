@@ -32,3 +32,10 @@
 .animate-scale-in {
   animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
+
+
+:root { --lh-primary: #4f46e5; --lh-secondary: #06b6d4; }
+
+button, input, select, textarea { min-height: 2.5rem; }
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--lh-primary); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: 0.01ms !important; } }
