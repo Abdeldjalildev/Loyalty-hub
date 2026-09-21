@@ -27,13 +27,26 @@ function buildDemoMerchant() {
   };
 }
 
-async function ensureDemoAuthUser({ email, password, displayName }) {\n  if (!email || !password) throw new Error('DEMO_MERCHANT_EMAIL and DEMO_MERCHANT_PASSWORD are required');\n  const auth = getAuth();\n  let user;\n  try { user = await auth.getUserByEmail(email); }\n  catch (error) { if (error.code !== 'auth/user-not-found') throw error; user = await auth.createUser({ email, password, emailVerified: true, displayName }); }\n  if (!user.emailVerified) user = await auth.updateUser(user.uid, { emailVerified: true });\n  return user;\n}\n\nasync function seedDemoTenant(db) {
-  const demoEmail = process.env.DEMO_MERCHANT_EMAIL;\n  const demoPassword = process.env.DEMO_MERCHANT_PASSWORD;\n  const owner = await ensureDemoAuthUser({ email: demoEmail, password: demoPassword, displayName: 'LoyaltyHub Demo Café' });\n  const merchantRef = db.doc('merchants/' + DEMO_MERCHANT_ID);
+async function ensureDemoAuthUser({ email, password, displayName }) {
+  if (!email || !password) throw new Error('DEMO_MERCHANT_EMAIL and DEMO_MERCHANT_PASSWORD are required');
+  const auth = getAuth();
+  let user;
+  try { user = await auth.getUserByEmail(email); }
+  catch (error) { if (error.code !== 'auth/user-not-found') throw error; user = await auth.createUser({ email, password, emailVerified: true, displayName }); }
+  if (!user.emailVerified) user = await auth.updateUser(user.uid, { emailVerified: true });
+  return user;
+}
+
+async function seedDemoTenant(db) {
+  const demoEmail = process.env.DEMO_MERCHANT_EMAIL;
+  const demoPassword = process.env.DEMO_MERCHANT_PASSWORD;
+  const owner = await ensureDemoAuthUser({ email: demoEmail, password: demoPassword, displayName: 'LoyaltyHub Demo Café' });
+  const merchantRef = db.doc('merchants/' + DEMO_MERCHANT_ID);
   const customerRef = db.doc('merchants/' + DEMO_MERCHANT_ID + '/customers/' + DEMO_CUSTOMER_ID);
   await merchantRef.set({
     ...buildDemoMerchant(),
-    ownerUid: 'demo-seed-owner',
-    ownerEmail: 'demo-owner@example.com',
+    ownerUid: owner.uid,
+    ownerEmail: owner.email.toLowerCase(),
     createdAt: FieldValue.serverTimestamp(),
     updatedAt: FieldValue.serverTimestamp(),
   }, { merge: true });
@@ -57,7 +70,9 @@ async function ensureDemoAuthUser({ email, password, displayName }) {\n  if (!em
     }, { merge: true });
   }
 
-  await db.doc('merchantUsers/' + owner.uid).set({ authUid: owner.uid, merchantId: DEMO_MERCHANT_ID, role: 'owner', status: 'active', createdAt: FieldValue.serverTimestamp(), updatedAt: FieldValue.serverTimestamp() }, { merge: true });\n\n  await customerRef.set({
+  await db.doc('merchantUsers/' + owner.uid).set({ authUid: owner.uid, merchantId: DEMO_MERCHANT_ID, role: 'owner', status: 'active', createdAt: FieldValue.serverTimestamp(), updatedAt: FieldValue.serverTimestamp() }, { merge: true });
+
+  await customerRef.set({
     customerId: DEMO_CUSTOMER_ID, merchantId: DEMO_MERCHANT_ID,
     name: 'Demo Customer', email: 'demo.customer@example.com', phone: '+213 555 111 111',
     points: 125, status: 'active', demo: true,
