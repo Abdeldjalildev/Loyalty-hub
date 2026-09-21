@@ -1,6 +1,6 @@
 # Phase 4 — Gate 5: Closure
 
-**Status: IMPLEMENTED / PENDING FINAL CI**
+**Status: PASS / CLOSED**
 
 All Phase 4 implementation gates are complete:
 - transaction ledger;
@@ -13,4 +13,4 @@ All Phase 4 implementation gates are complete:
 
 Phase 5 customer production identity remains out of scope.
 
-Final PASS / CLOSED requires green CI evidence on the Phase 4 branch and after merge to `main`.
+Evidence: Phase 4 PR GitHub Actions run #43 (`35641378014`) passed frontend and Firebase foundation; Firebase emulator tests: 12/12 passed. Main verification run #44 (`35641526182`) also passed frontend and Firebase foundation.
