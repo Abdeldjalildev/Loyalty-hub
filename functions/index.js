@@ -3,6 +3,7 @@ const { setGlobalOptions } = require("firebase-functions/v2");
 const { getApps, initializeApp } = require("firebase-admin/app");
 const { getFirestore } = require("firebase-admin/firestore");
 const { ensureMerchantTenant } = require("./tenant");
+const { provisionCustomer, getCustomerContext } = require("./customer");
 
 setGlobalOptions({ region: "us-central1", maxInstances: 10 });
 if (getApps().length === 0) initializeApp();
@@ -50,6 +51,7 @@ const {
   createQrToken,
   redeemReward,
   listTransactions,
+  listCustomerPortalData,
 } = require("./loyalty");
 
 async function requireMerchantContext(request) {
@@ -132,5 +134,49 @@ exports.listTransactions = onCall(async (request) => {
     return { transactions: await listTransactions(db, merchantId, request.data?.customerId) };
   } catch (error) {
     throw new HttpsError("internal", error instanceof Error ? error.message : "TRANSACTION_LOAD_FAILED");
+  }
+});
+
+
+exports.provisionCustomer = onCall(async (request) => {
+  if (!request.auth) throw new HttpsError("unauthenticated", "Authentication is required.");
+  try {
+    return await provisionCustomer({
+      db,
+      uid: request.auth.uid,
+      email: request.auth.token.email,
+      merchantId: request.data?.merchantId,
+    });
+  } catch (error) {
+    throw new HttpsError("invalid-argument", error instanceof Error ? error.message : "CUSTOMER_PROVISIONING_FAILED");
+  }
+});
+
+exports.getCustomerContext = onCall(async (request) => {
+  if (!request.auth) throw new HttpsError("unauthenticated", "Authentication is required.");
+  try {
+    return await getCustomerContext({ db, uid: request.auth.uid, email: request.auth.token.email });
+  } catch (error) {
+    throw new HttpsError("permission-denied", error instanceof Error ? error.message : "CUSTOMER_CONTEXT_FAILED");
+  }
+});
+
+exports.getCustomerPortalData = onCall(async (request) => {
+  if (!request.auth) throw new HttpsError("unauthenticated", "Authentication is required.");
+  try {
+    const context = await getCustomerContext({ db, uid: request.auth.uid, email: request.auth.token.email });
+    return await listCustomerPortalData(db, context.merchantId, context.customerId);
+  } catch (error) {
+    throw new HttpsError("permission-denied", error instanceof Error ? error.message : "CUSTOMER_PORTAL_LOAD_FAILED");
+  }
+});
+
+exports.createCustomerQrToken = onCall(async (request) => {
+  if (!request.auth) throw new HttpsError("unauthenticated", "Authentication is required.");
+  try {
+    const context = await getCustomerContext({ db, uid: request.auth.uid, email: request.auth.token.email });
+    return await createQrToken(db, context.merchantId, context.customerId, request.auth.uid);
+  } catch (error) {
+    throw new HttpsError("permission-denied", error instanceof Error ? error.message : "CUSTOMER_QR_FAILED");
   }
 });
