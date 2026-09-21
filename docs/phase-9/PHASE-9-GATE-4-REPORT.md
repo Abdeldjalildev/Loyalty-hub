@@ -1,7 +1,7 @@
 # Phase 9 — Gate 4: Sales Demo Validation
 
 ## Status
-IMPLEMENTED / PENDING CI
+PASS / CLOSED
 
 ## Demo flow
 Merchant login → dashboard → customer search → points issuance → analytics → Business Settings → branding/rules → customer portal → secure QR → merchant redemption → updated balance/transaction.
