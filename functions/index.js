@@ -100,7 +100,14 @@ exports.updateReward = onCall((request) => runMerchantMutation(request, (merchan
 ));
 
 exports.issuePoints = onCall((request) => runMerchantMutation(request, (merchantId) =>
-  issuePoints(db, merchantId, request.data?.customerId, request.data?.points)
+  issuePoints(
+    db,
+    merchantId,
+    request.data?.customerId,
+    request.data?.points,
+    request.auth.uid,
+    request.data?.idempotencyKey
+  )
 ));
 
 
