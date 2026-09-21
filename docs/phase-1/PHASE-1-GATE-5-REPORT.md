@@ -43,7 +43,11 @@ The repository now contains deterministic CI instructions for:
 - Firebase Emulator Suite Auth/Firestore/Functions startup;
 - Functions test command.
 
-GitHub file operations themselves do not execute npm or Firebase commands. Therefore final runtime evidence must be taken from the workflow run before treating Phase 1 as operationally verified.
+Final runtime evidence was obtained from GitHub Actions workflow run #26 (`35636482998`) on the Phase 1 foundation workflow. Both jobs completed successfully:
+- `frontend` — SUCCESS: `npm ci`, `npm run lint`, `npm run build`.
+- `firebase-foundation` — SUCCESS: Functions dependency installation, `node --check functions/index.js`, JDK 21 setup, and Firebase Emulator Suite Auth/Firestore/Functions execution.
+
+This run is the authoritative CI/runtime evidence for Phase 1 operational verification.
 
 ### Known limitations
 - No Firebase project credentials are committed or inferred.
@@ -53,7 +57,7 @@ GitHub file operations themselves do not execute npm or Firebase commands. There
 - Transactions/redemption/QR begin in Phase 4.
 
 ### Next prerequisite
-Phase 2 Gate 1 requires the Phase 1 CI foundation checks to be green and the Firebase project/environment identifiers to be supplied through secure deployment configuration.
+Phase 2 Gate 1 requires the Phase 1 CI foundation checks to be green and the Firebase project/environment identifiers to be supplied through secure configuration. The selected Firebase project is `loyal-hub-project`; its identifiers/configuration must be wired through the repository's environment/deployment mechanism without committing secrets. Phase 2 implementation must explicitly verify that the application and Firebase tooling target this project rather than an unintended Firebase project.
 
 **Gate decision: PASS / CLOSED**
 **Phase 1: PASS / CLOSED**
