@@ -61,3 +61,18 @@ test("customer portal QR can be redeemed only in its mapped tenant", async () =>
   await db.recursiveDelete(db.doc("merchants/" + merchantId));
   await db.doc("customerUsers/phase5-uid-e2e").delete();
 });
+
+test("customer context cannot cross into another tenant", async () => {
+  const merchantA = "phase5-cross-a-" + Date.now();
+  const merchantB = "phase5-cross-b-" + Date.now();
+  const emailA = "cross-a-" + Date.now() + "@example.test";
+  const customerA = await createCustomer(db, merchantA, { name: "A", email: emailA, phone: "" });
+  await createCustomer(db, merchantB, { name: "B", email: "cross-b-" + Date.now() + "@example.test", phone: "" });
+  await provisionCustomer({ db, uid: "phase5-cross-uid", email: emailA, merchantId: merchantA });
+  const own = await getCustomerContext({ db, uid: "phase5-cross-uid", email: emailA });
+  assert.equal(own.customerId, customerA.id);
+  assert.notEqual(own.merchantId, merchantB);
+  await db.recursiveDelete(db.doc("merchants/" + merchantA));
+  await db.recursiveDelete(db.doc("merchants/" + merchantB));
+  await db.doc("customerUsers/phase5-cross-uid").delete();
+});
