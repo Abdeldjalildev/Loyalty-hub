@@ -187,6 +187,7 @@ async function updateReward(db, merchantId, rewardId, input) {
 }
 
 async function issuePoints(db, merchantId, customerId, points, actorUid, idempotencyKey) {
+  await ensureLoyaltyProgram(db, merchantId);
   const id = requiredString(customerId, "customerId", 1, 128);
   const amount = validatePoints(points);
   const key = validateIdempotencyKey(idempotencyKey);
