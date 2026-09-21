@@ -46,4 +46,10 @@ async function ensureMerchantTenant({ db, uid, email, displayName }) {
   return { merchantId: finalMapping.data().merchantId, ...finalMerchant.data() };
 }
 
-module.exports = { ensureMerchantTenant };
+async function getMerchantProfile({ db, merchantId }) {
+  const snapshot = await db.doc("merchants/" + merchantId).get();
+  if (!snapshot.exists || snapshot.data().status !== "active") throw new Error("Merchant tenant is not active");
+  return { merchantId, ...snapshot.data() };
+}
+
+module.exports = { ensureMerchantTenant, getMerchantProfile };
