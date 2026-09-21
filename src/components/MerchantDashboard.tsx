@@ -6,6 +6,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 
 import { QrScannerModal } from './QrScannerModal';
 import { StatsCards } from './merchant/StatsCards';
 import { CustomerForm } from './merchant/CustomerForm';
+import { BusinessSettings } from './BusinessSettings';
 
 export const MerchantDashboard: React.FC = () => {
   const { customers, campaigns, addPoints, addNewCustomer, redeemReward, loading, error, reload } = useLoyalty();
@@ -166,6 +167,8 @@ export const MerchantDashboard: React.FC = () => {
           </table>
         </div>
       </div>
+
+      <BusinessSettings />
 
       <QrScannerModal isOpen={isScannerOpen} onClose={() => setIsScannerOpen(false)} onScanSuccess={handleScanSuccess} />
 
