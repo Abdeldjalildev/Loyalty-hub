@@ -1,6 +1,6 @@
 # Phase 4 — Gate 2: Atomic Redemption
 
-**Status: IMPLEMENTED / PENDING FINAL CI**
+**Status: PASS / CLOSED**
 
 Reward redemption is performed in one Firestore transaction.
 
@@ -12,4 +12,4 @@ The transaction reads the idempotency record, QR token, reward and customer befo
 
 Insufficient balance, inactive/missing customer, inactive/missing reward, expired QR, reused QR, and invalid reward costs are rejected without a partial redemption.
 
-Final PASS requires green CI evidence.
+Evidence: Phase 4 PR GitHub Actions run #43 (`35641378014`) passed frontend and Firebase foundation; Firebase emulator tests: 12/12 passed. Main verification run #44 (`35641526182`) also passed frontend and Firebase foundation.
