@@ -40,3 +40,81 @@ test("loyalty program and rewards are persisted per merchant", async () => {
   assert.equal(first.rewards[0].merchantId, merchantId);
   await db.recursiveDelete(db.doc("merchants/" + merchantId));
 });
+
+test("point issuance creates an immutable ledger entry and is idempotent", async () => {
+  const merchantId = "phase4-earn-" + Date.now();
+  const customer = await createCustomer(db, merchantId, { name: "Ledger Customer", email: "ledger@example.test", phone: "0555000001" });
+  const first = await issuePoints(db, merchantId, customer.id, 100, "owner-a", "earn-key-123456");
+  const replay = await issuePoints(db, merchantId, customer.id, 100, "owner-a", "earn-key-123456");
+  assert.equal(first.balanceAfter, 100);
+  assert.equal(replay.balanceAfter, 100);
+  assert.equal(replay.idempotentReplay, true);
+  const ledger = await db.collection("merchants/" + merchantId + "/transactions").where("customerId", "==", customer.id).get();
+  assert.equal(ledger.size, 1);
+  assert.equal(ledger.docs[0].data().type, "earn");
+  await db.recursiveDelete(db.doc("merchants/" + merchantId));
+});
+
+test("secure QR redemption atomically consumes the token, reward, balance and ledger", async () => {
+  const merchantId = "phase4-redeem-" + Date.now();
+  const customer = await createCustomer(db, merchantId, { name: "Redeem Customer", email: "redeem@example.test", phone: "0555000002" });
+  await issuePoints(db, merchantId, customer.id, 100, "owner-a", "earn-key-" + Date.now());
+  await ensureLoyaltyProgram(db, merchantId);
+  const rewards = await db.collection("merchants/" + merchantId + "/rewards").where("status", "==", "active").get();
+  const reward = rewards.docs.find((doc) => doc.data().pointsRequired === 50);
+  assert.ok(reward, "default 50-point reward must exist");
+  const qr = await createQrToken(db, merchantId, customer.id, "owner-a");
+  assert.match(qr.qrPayload, /^LHY2:/);
+  assert.notEqual(qr.qrPayload, customer.id);
+
+  const redeemed = await redeemReward(db, merchantId, qr.qrPayload, reward.id, "owner-a", "redeem-key-123456");
+  assert.equal(redeemed.pointsCost, 50);
+  assert.equal(redeemed.balanceBefore, 100);
+  assert.equal(redeemed.balanceAfter, 50);
+
+  const replay = await redeemReward(db, merchantId, qr.qrPayload, reward.id, "owner-a", "redeem-key-123456");
+  assert.equal(replay.idempotentReplay, true);
+  assert.equal(replay.redemptionId, redeemed.redemptionId);
+
+  const persistedCustomer = await db.doc("merchants/" + merchantId + "/customers/" + customer.id).get();
+  assert.equal(persistedCustomer.data().points, 50);
+  const redemption = await db.doc("merchants/" + merchantId + "/redemptions/" + redeemed.redemptionId).get();
+  assert.equal(redemption.data().status, "completed");
+  const ledger = await db.doc("merchants/" + merchantId + "/transactions/" + redeemed.transactionId).get();
+  assert.equal(ledger.data().type, "redeem");
+  assert.equal(ledger.data().points, -50);
+
+  await assert.rejects(
+    () => redeemReward(db, merchantId, qr.qrPayload, reward.id, "owner-a", "different-key-123456"),
+    /already been used/
+  );
+  await db.recursiveDelete(db.doc("merchants/" + merchantId));
+});
+
+test("concurrent redemption attempts cannot spend the same QR token twice", async () => {
+  const merchantId = "phase4-race-" + Date.now();
+  const customer = await createCustomer(db, merchantId, { name: "Race Customer", email: "race@example.test", phone: "0555000003" });
+  await issuePoints(db, merchantId, customer.id, 100, "owner-a", "race-earn-" + Date.now());
+  await ensureLoyaltyProgram(db, merchantId);
+  const rewards = await db.collection("merchants/" + merchantId + "/rewards").where("status", "==", "active").get();
+  const reward = rewards.docs.find((doc) => doc.data().pointsRequired === 50);
+  const qr = await createQrToken(db, merchantId, customer.id, "owner-a");
+
+  const attempts = await Promise.allSettled([
+    redeemReward(db, merchantId, qr.qrPayload, reward.id, "owner-a", "race-key-a-123456"),
+    redeemReward(db, merchantId, qr.qrPayload, reward.id, "owner-a", "race-key-b-123456"),
+  ]);
+  assert.equal(attempts.filter((item) => item.status === "fulfilled").length, 1);
+  assert.equal(attempts.filter((item) => item.status === "rejected").length, 1);
+
+  const persistedCustomer = await db.doc("merchants/" + merchantId + "/customers/" + customer.id).get();
+  assert.equal(persistedCustomer.data().points, 50);
+  const redemptions = await db.collection("merchants/" + merchantId + "/redemptions").get();
+  assert.equal(redemptions.size, 1);
+  await db.recursiveDelete(db.doc("merchants/" + merchantId));
+});
+
+test("invalid or raw customer identifiers cannot be used as secure QR payloads", async () => {
+  assert.throws(() => parseQrPayload("customer-id-123"), /Invalid QR payload/);
+  assert.throws(() => parseQrPayload("LHY2:short"), /Invalid QR token/);
+});
