@@ -2,15 +2,15 @@
 
 ## Current status
 
-**IMPLEMENTED / PENDING FINAL CI**
+**PASS / CLOSED**
 
 ## Gate status
 
-- Gate 1 — Transaction Model: IMPLEMENTED / PENDING FINAL CI
-- Gate 2 — Atomic Redemption: IMPLEMENTED / PENDING FINAL CI
-- Gate 3 — Domain Redemption Defect Closure: IMPLEMENTED / PENDING FINAL CI
-- Gate 4 — Secure QR: IMPLEMENTED / PENDING FINAL CI
-- Gate 5 — Closure: IMPLEMENTED / PENDING FINAL CI
+- Gate 1 — Transaction Model: PASS / CLOSED
+- Gate 2 — Atomic Redemption: PASS / CLOSED
+- Gate 3 — Domain Redemption Defect Closure: PASS / CLOSED
+- Gate 4 — Secure QR: PASS / CLOSED
+- Gate 5 — Closure: PASS / CLOSED
 
 ## Delivered
 
@@ -34,4 +34,4 @@ These remain later phases.
 
 ## Evidence
 
-GitHub Actions verification is required before marking this phase PASS / CLOSED.
+Evidence: Phase 4 PR GitHub Actions run #43 (`35641378014`) passed frontend and Firebase foundation; Firebase emulator tests: 12/12 passed. Main verification run #44 (`35641526182`) also passed frontend and Firebase foundation.
