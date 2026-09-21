@@ -33,7 +33,7 @@ async function ensureMerchantTenant({ db, uid, email, displayName }) {
     transaction.create(merchantRef, {
       merchantId, name: normalizedName, ownerUid: uid,
       ownerEmail: typeof email === "string" ? email.trim().toLowerCase() : null,
-      status: "active", createdAt: now, updatedAt: now,
+      status: "active", description: "", phone: "", websiteUrl: "", instagramUrl: "", facebookUrl: "", whatsappUrl: "", logoUrl: "", branding: { primaryColor: "#4f46e5", secondaryColor: "#06b6d4", theme: "light" }, createdAt: now, updatedAt: now,
     });
     transaction.create(userRef, {
       authUid: uid, merchantId, role: "owner", status: "active",
