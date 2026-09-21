@@ -700,7 +700,8 @@ Current status:
 - Phase 0 is fully closed.
 - Phase 1 is fully closed.
 - The next authorized step is Phase 2 — Gate 1: Merchant Identity.
-- Firebase implementation remains deferred to Phase 1.
+- Phase 1 CI/runtime evidence is confirmed by GitHub Actions run #26 (`35636482998`): frontend and firebase-foundation both succeeded.
+- The selected Firebase project for the implementation is `loyal-hub-project`; Phase 2 must explicitly verify and wire the repository to this project through safe environment/deployment configuration without committing secrets.
 - No production business logic should be invented from memory; inspect the current repository before each implementation step.
 
 ## 11. Change-Control Rule
