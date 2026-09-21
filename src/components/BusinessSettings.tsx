@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Palette, Save, Settings2, Plus, Trash2 } from 'lucide-react';
+import { Palette, Save, Settings2, Plus } from 'lucide-react';
 import { useAuth } from '../context/useAuth';
 import { useLoyalty } from '../context/useLoyalty';
 import { callFunction } from '../firebase/callable';
@@ -19,7 +19,6 @@ const defaults: ProductConfig = {
 export const BusinessSettings: React.FC = () => {
   const { session, refreshMerchant } = useAuth();
   const { campaigns, createReward, updateReward } = useLoyalty();
-  const [config, setConfig] = useState<ProductConfig>(defaults);
   const [form, setForm] = useState<ProductConfig>(defaults);
   const [status, setStatus] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -27,7 +26,7 @@ export const BusinessSettings: React.FC = () => {
 
   useEffect(() => {
     if (!session) return;
-    void callFunction<ProductConfig>('getMerchantProductConfig', session).then(data => { setConfig(data); setForm(data); });
+    void callFunction<ProductConfig>('getMerchantProductConfig', session).then(data => { setForm(data); });
   }, [session]);
 
   useEffect(() => {
@@ -49,7 +48,6 @@ export const BusinessSettings: React.FC = () => {
       await callFunction('updateMerchantProfile', session, { ...form.merchant });
       await callFunction('updateMerchantBranding', session, { ...form.merchant.branding });
       await callFunction('updateLoyaltyConfig', session, { ...form.program });
-      setConfig(form);
       await refreshMerchant();
       setStatus('Saved successfully.');
     } catch (error) {
