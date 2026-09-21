@@ -71,7 +71,11 @@ async function runMerchantMutation(request, operation) {
 
 exports.getLoyaltyData = onCall(async (request) => {
   const merchantId = await requireMerchantContext(request);
-  return runMerchantMutation({ ...request, auth: request.auth }, () => listLoyaltyData(db, merchantId));
+  try {
+    return await listLoyaltyData(db, merchantId);
+  } catch (error) {
+    throw new HttpsError("internal", error instanceof Error ? error.message : "LOYALTY_LOAD_FAILED");
+  }
 });
 
 exports.createCustomer = onCall((request) => runMerchantMutation(request, (merchantId) => createCustomer(db, merchantId, request.data || {})));
