@@ -60,8 +60,8 @@ async function ensureLoyaltyProgram(db, merchantId) {
 async function listLoyaltyData(db, merchantId) {
   await ensureLoyaltyProgram(db, merchantId);
   const [customersSnapshot, rewardsSnapshot, programSnapshot] = await Promise.all([
-    db.collection("merchants/" + merchantId + "/customers").where("status", "==", "active").orderBy("createdAt", "desc").get(),
-    db.collection("merchants/" + merchantId + "/rewards").where("status", "==", "active").orderBy("createdAt", "asc").get(),
+    db.collection("merchants/" + merchantId + "/customers").where("status", "==", "active").get(),
+    db.collection("merchants/" + merchantId + "/rewards").where("status", "==", "active").get(),
     db.doc("merchants/" + merchantId + "/loyaltyPrograms/default").get(),
   ]);
   return {
