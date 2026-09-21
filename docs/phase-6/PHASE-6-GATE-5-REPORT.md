@@ -1,11 +1,10 @@
 # Phase 6 — Gate 5: Closure
 
-**Status: IMPLEMENTED / PENDING CI**
+**Status: PASS / CLOSED**
 
 All Phase 6 implementation gates are complete.
 
-Final closure requires:
-1. green GitHub Actions verification for the Phase 6 branch;
-2. merge to main;
-3. green post-merge main verification;
-4. closure documentation updated with exact evidence.
+
+## Final verification
+
+GitHub Actions branch run #67 (`35644827997`) passed `frontend` and `firebase-foundation`; Firebase test suite: 20/20 passed. PR #5 was merged to `main` with merge commit `253d4416fa1bfa5add22c645ef8c69e712365c13`. Post-merge main run #68 (`35644995825`) passed `frontend` and `firebase-foundation`.
