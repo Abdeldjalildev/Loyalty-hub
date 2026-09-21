@@ -118,3 +118,24 @@ test("invalid or raw customer identifiers cannot be used as secure QR payloads",
   assert.throws(() => parseQrPayload("customer-id-123"), /Invalid QR payload/);
   assert.throws(() => parseQrPayload("LHY2:short"), /Invalid QR token/);
 });
+
+
+test("a QR token is tenant-bound and cannot be redeemed by another merchant", async () => {
+  const merchantA = "phase4-tenant-a-" + Date.now();
+  const merchantB = "phase4-tenant-b-" + Date.now();
+  const customerA = await createCustomer(db, merchantA, { name: "Tenant A Customer", email: "a@example.test", phone: "0555000004" });
+  await issuePoints(db, merchantA, customerA.id, 100, "owner-a", "tenant-a-earn-123456");
+  await ensureLoyaltyProgram(db, merchantA);
+  await ensureLoyaltyProgram(db, merchantB);
+  const rewardsB = await db.collection("merchants/" + merchantB + "/rewards").where("status", "==", "active").get();
+  const rewardB = rewardsB.docs[0];
+  const qr = await createQrToken(db, merchantA, customerA.id, "owner-a");
+  await assert.rejects(
+    () => redeemReward(db, merchantB, qr.qrPayload, rewardB.id, "owner-b", "tenant-b-redeem-123456"),
+    /QR token not found/
+  );
+  const balanceA = await db.doc("merchants/" + merchantA + "/customers/" + customerA.id).get();
+  assert.equal(balanceA.data().points, 100);
+  await db.recursiveDelete(db.doc("merchants/" + merchantA));
+  await db.recursiveDelete(db.doc("merchants/" + merchantB));
+});
