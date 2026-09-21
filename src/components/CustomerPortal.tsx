@@ -21,10 +21,7 @@ export const CustomerPortal: React.FC = () => {
   const [qrError, setQrError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!effectiveCustomerId) {
-      setQrPayload('');
-      return;
-    }
+    if (!effectiveCustomerId) return;
     let cancelled = false;
     const loadQr = async () => {
       try {
