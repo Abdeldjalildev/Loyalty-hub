@@ -10,6 +10,14 @@ export interface MerchantContext {
     name: string;
     ownerUid: string;
     ownerEmail: string | null;
+    description?: string;
+    phone?: string;
+    websiteUrl?: string;
+    instagramUrl?: string;
+    facebookUrl?: string;
+    whatsappUrl?: string;
+    logoUrl?: string;
+    branding?: { primaryColor: string; secondaryColor: string; theme: "light" | "dark" };
     status: string;
   };
 }
