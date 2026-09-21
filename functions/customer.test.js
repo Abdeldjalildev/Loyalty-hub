@@ -32,7 +32,7 @@ test("customer identity cannot be rebound across merchants", async () => {
   const merchantA = "phase5-a-" + Date.now();
   const merchantB = "phase5-b-" + Date.now();
   const email = "rebind-" + Date.now() + "@example.test";
-  await createCustomer(db, merchantA, { name: "A", email, phone: "" });
+  await createCustomer(db, merchantA, { name: "Customer A", email, phone: "" });
   await createCustomer(db, merchantB, { name: "Customer B", email: "other-" + Date.now() + "@example.test", phone: "" });
   await provisionCustomer({ db, uid: "phase5-uid-rebind", email, merchantId: merchantA });
   await assert.rejects(
