@@ -708,10 +708,25 @@ Current status:
 - Phase 2 Gate 3 report: `docs/phase-2/PHASE-2-GATE-3-REPORT.md`.
 - Phase 2 Gate 4 report: `docs/phase-2/PHASE-2-GATE-4-REPORT.md`.
 - Phase 2 Gate 5 report: `docs/phase-2/PHASE-2-GATE-5-REPORT.md`.
-- No product source files were modified during Gates 1–3.
+- The historical Phase 2/Phase 1 notes above are preserved as historical records; current Phase status is maintained in this section.
 - Phase 0 is fully closed.
 - Phase 1 is fully closed.
-- The next authorized step is Phase 3 — Gate 1: Customer Persistence.
+- Phase 3 — Gate 1: **PASS / CLOSED**.
+- Phase 3 — Gate 2: **PASS / CLOSED**.
+- Phase 3 — Gate 3: **PASS / CLOSED**.
+- Phase 3 — Gate 4: **PASS / CLOSED**.
+- Phase 3 — Gate 5: **PASS / CLOSED**.
+- Phase 3: **PASS / CLOSED**.
+- Phase 3 final verification: PR run #36 (`35638940069`) and main run #38 (`35639275561`) passed.
+- Phase 4 — Gate 1: **PASS / CLOSED**.
+- Phase 4 — Gate 2: **PASS / CLOSED**.
+- Phase 4 — Gate 3: **PASS / CLOSED**.
+- Phase 4 — Gate 4: **PASS / CLOSED**.
+- Phase 4 — Gate 5: **PASS / CLOSED**.
+- Phase 4: **PASS / CLOSED**.
+- Phase 4 PR verification: GitHub Actions run #43 (`35641378014`) passed frontend and Firebase foundation; emulator tests: 12/12 passed.
+- Phase 4 main verification: GitHub Actions run #44 (`35641526182`) passed frontend and Firebase foundation after merge.
+- The next authorized step is Phase 5 — Gate 1: Customer Identity.
 - Phase 1 CI/runtime evidence is confirmed by GitHub Actions run #26 (`35636482998`): frontend and firebase-foundation both succeeded.
 - The selected Firebase project for the implementation is `loyal-hub-project`; Phase 2 must explicitly verify and wire the repository to this project through safe environment/deployment configuration without committing secrets.
 - No production business logic should be invented from memory; inspect the current repository before each implementation step.
