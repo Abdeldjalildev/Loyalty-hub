@@ -1,6 +1,6 @@
 import React from 'react';
 import { Users, Award, BarChart3 } from 'lucide-react';
-import { useApp } from '../../context/AppContext';
+import { useApp } from '../../context/useApp';
 
 interface StatsCardsProps {
   totalCustomers: number;
