@@ -148,7 +148,7 @@ Full white-labeling, custom domains, per-client source-code customization, and e
 
 ### 4.1 Customer access model
 
-For the first MVP, the customer self-service portal uses **Firebase Authentication with email-link (passwordless) sign-in**.
+For the first MVP, the customer self-service portal uses **Firebase Authentication with email + password sign-in**.
 
 Rules:
 - customer email is the portal identity anchor;
