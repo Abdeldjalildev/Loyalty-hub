@@ -358,7 +358,7 @@ customerUsers/{auth.uid} resolves customer + merchant
 Customer portal loads only authorized customer data
 ```
 
-A customer record without an enrolled email-linked identity can remain merchant-managed but cannot use the self-service portal.
+A customer record without an enrolled email + password identity can remain merchant-managed but cannot use the self-service portal.
 
 Customer authentication does not grant merchant permissions.
 
