@@ -157,7 +157,7 @@ Rules:
 - customer cannot select an arbitrary customer ID to enter another account;
 - phone-only customers may exist as merchant-managed records, but self-service portal access requires a verified email enrollment in this MVP.
 
-Password-based authentication, phone/SMS authentication, social providers, and anonymous customer access are out of scope unless a later product requirement explicitly changes the contract.
+Phone/SMS authentication, social providers, and anonymous customer access are out of scope unless a later product requirement explicitly changes the contract. Email + password is the approved MVP customer authentication model.
 
 ### 4.2 Customer portal
 An authenticated customer can view:
