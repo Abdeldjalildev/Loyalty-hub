@@ -104,7 +104,7 @@ Merchant is the tenant root.
 
 ### Authentication
 - Merchant: Firebase Authentication.
-- Customer: Firebase Authentication email-link/passwordless access.
+- Customer: Firebase Authentication with email + password access; protected portal operations require verified email.
 
 ### Sensitive operations
 Server-authoritative Cloud Functions.
