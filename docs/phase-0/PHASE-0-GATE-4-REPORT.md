@@ -342,7 +342,7 @@ If a future flow requires single-use redemption tokens, those tokens will be sep
 
 ## 9. Customer authentication architecture
 
-MVP customer self-service uses Firebase Authentication email-link/passwordless sign-in.
+MVP customer self-service uses Firebase Authentication with email + password sign-in. Protected customer portal operations require a verified email.
 
 Flow:
 
