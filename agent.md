@@ -400,8 +400,7 @@ All point changes and redemptions are trusted, atomic, persistent and auditable.
 Goal: replace the current simulator with a real customer experience.
 
 #### Gate 1 — Customer Identity
-Choose and implement the MVP customer access model based on the Phase 0 contract.
-Examples may include account, magic link, phone-based access or controlled onboarding; do not add complexity without need.
+Implement the approved Phase 0 MVP customer access model: Firebase Authentication with email + password. Protected customer portal operations require verified email. Do not substitute a different authentication model without an explicit product-contract change.
 
 #### Gate 2 — Customer Portal
 Customer can securely view:
