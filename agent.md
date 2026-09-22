@@ -149,7 +149,7 @@ Evidence: `docs/phase-0/PHASE-0-GATE-2-REPORT.md`
 Key contract decisions:
 - Merchant Owner is the only merchant role in MVP.
 - One active loyalty program per merchant.
-- Customer self-service uses Firebase Authentication email-link/passwordless access.
+- Customer self-service uses Firebase Authentication with email + password access. Email verification is required for protected customer portal operations as enforced by Phase 8.
 - Customer email is required for self-service enrollment; phone-only records may remain merchant-managed.
 - Point issuance and redemption are server-authoritative.
 - MVP excludes payments, advanced loyalty/marketing, staff roles, multi-location, native apps, POS integrations, and advanced BI.
