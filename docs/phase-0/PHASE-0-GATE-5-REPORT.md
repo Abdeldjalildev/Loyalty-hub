@@ -51,7 +51,7 @@ Core customer flow:
 
 ```text
 Customer enrollment
- → Passwordless authentication
+ → Email + password authentication
  → Own loyalty portal
  → Own balance
  → Rewards
