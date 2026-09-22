@@ -46,7 +46,7 @@ The browser is **not** trusted for:
 
 Firebase Authentication provides:
 - merchant authentication;
-- customer passwordless email-link authentication;
+- customer email + password authentication;
 - authenticated session identity.
 
 Authentication proves identity; it does not by itself prove tenant ownership.
