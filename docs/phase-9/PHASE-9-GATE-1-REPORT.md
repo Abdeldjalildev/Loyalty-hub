@@ -4,7 +4,7 @@
 PASS / CLOSED
 
 ## Scope
-A deterministic, repeatable demo tenant seed was added for client presentations.
+A repeatable demo tenant seed with deterministic demo identifiers/content was added for client presentations. Runtime-generated timestamps remain naturally non-deterministic.
 
 ## Evidence
 - `functions/demo-seed.js`
